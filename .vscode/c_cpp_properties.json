@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/imgui",
+                "${workspaceFolder}/include/imgui/backends",
+                "${workspaceFolder}/include/SDL2",     // matches your build.bat flag
+                "${workspaceFolder}/include/ffmpeg"
+            ],
+            "defines": [],
+            "compilerPath": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\\g++.exe",  // Update this path to your g++ executable
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
