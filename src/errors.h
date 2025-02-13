@@ -1,7 +1,6 @@
 /**
- * errors.h
- * ---
- * Defines a few error codes and a function to print them.
+ * @file errors.h
+ * @brief Error codes for the engine
  */
 
 #define ERROR_SDL_WINDOW_CREATE 1

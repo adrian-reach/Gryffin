@@ -1,6 +1,12 @@
+/**
+ * @file: shader.h
+ * @brief: Shader class for handling shader programs
+ */
+
 #pragma once
 #include <string>
 #include <unordered_map>
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 

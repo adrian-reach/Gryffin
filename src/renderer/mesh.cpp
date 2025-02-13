@@ -1,7 +1,13 @@
-#include "mesh.h"
-#include <glad/glad.h>
-#include <stdio.h>
+/**
+ * @file mesh.cpp
+ * @brief Mesh class for handling mesh data
+ */
 #include <cmath>
+#include <stdio.h>
+
+#include <glad/glad.h>
+
+#include "mesh.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

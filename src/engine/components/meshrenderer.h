@@ -1,13 +1,19 @@
+/**
+ * @file meshrenderer.h
+ * @brief MeshRenderer component for rendering meshes
+ */
 #pragma once
+#include <memory>
+#include <string>
+
+#include <glm/glm.hpp>
+#include <imgui.h>
+
 #include "../component.h"
 #include "../gameobject.h"
 #include "../resourcemanager.h"
 #include "../../renderer/mesh.h"
 #include "../../renderer/shader.h"
-#include <imgui.h>
-#include <memory>
-#include <string>
-#include <glm/glm.hpp>
 
 class MeshRenderer : public Component
 {

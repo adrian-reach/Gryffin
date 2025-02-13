@@ -1,6 +1,12 @@
+/**
+ * @file renderer.cpp
+ * @brief Renderer class for handling rendering operations
+ */
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "renderer.h"
 #include "../engine/resourcemanager.h"
-#include <glm/gtc/matrix_transform.hpp>
 
 Renderer::Renderer()
 {

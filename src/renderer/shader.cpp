@@ -1,8 +1,14 @@
-#include "shader.h"
+/**
+ * @file shader.h
+ * @brief Shader class for handling shader programs
+ */
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "shader.h"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
@@ -43,8 +49,8 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         fragmentCode = fShaderStream.str();
 
         // Print shader code for debugging
-        printf("Vertex Shader Code:\n%s\n", vertexCode.c_str());
-        printf("Fragment Shader Code:\n%s\n", fragmentCode.c_str());
+        // printf("Vertex Shader Code:\n%s\n", vertexCode.c_str());
+        // printf("Fragment Shader Code:\n%s\n", fragmentCode.c_str());
     }
     catch (std::ifstream::failure e)
     {
@@ -101,15 +107,15 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     }
 
     // Print all active uniforms for debugging
-    for (GLint i = 0; i < numUniforms; i++)
-    {
-        GLchar name[128];
-        GLint size;
-        GLenum type;
-        glGetActiveUniform(ID, i, sizeof(name), NULL, &size, &type, name);
-        GLint location = glGetUniformLocation(ID, name);
-        printf("  %s (location: %d)\n", name, location);
-    }
+    // for (GLint i = 0; i < numUniforms; i++)
+    // {
+    //     GLchar name[128];
+    //     GLint size;
+    //     GLenum type;
+    //     glGetActiveUniform(ID, i, sizeof(name), NULL, &size, &type, name);
+    //     GLint location = glGetUniformLocation(ID, name);
+    //     printf("  %s (location: %d)\n", name, location);
+    // }
 
     // Clean up shader objects
     glDeleteShader(vertex);

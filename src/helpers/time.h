@@ -1,6 +1,5 @@
 /**
- * time.h
- * ---
+ * @file time.h
  * Header file for timestamp formatting functionality.
  */
 #ifndef VIDEO_PLAYBACK_TIME_H

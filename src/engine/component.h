@@ -1,3 +1,8 @@
+/**
+ * @file component.h
+ * @brief Component class for attaching functionality to GameObjects
+ */
+
 #pragma once
 #include <string>
 

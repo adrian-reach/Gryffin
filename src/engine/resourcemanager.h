@@ -1,3 +1,7 @@
+/**
+ * @file: resourcemanager.h
+ * @brief: ResourceManager class for managing resources like meshes and shaders
+ */
 #pragma once
 #include "../renderer/mesh.h"
 #include "../renderer/shader.h"

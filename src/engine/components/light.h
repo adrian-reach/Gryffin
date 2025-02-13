@@ -1,9 +1,15 @@
+/**
+ * @file light.h
+ * @brief Light component for handling light sources
+ */
 #pragma once
+#include <string>
+
+#include <glm/glm.hpp>
+#include <imgui.h>
+
 #include "../component.h"
 #include "../gameobject.h"
-#include <imgui.h>
-#include <string>
-#include <glm/glm.hpp>
 
 class Light : public Component
 {
@@ -27,6 +33,7 @@ public:
 
     void render(Shader &shader) override
     {
+        // TODO: Implement light rendering
         // Light properties are set by the Scene class during rendering
         // since we need to handle multiple lights and default lighting
     }

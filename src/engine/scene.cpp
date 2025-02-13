@@ -1,7 +1,13 @@
-#include "scene.h"
+/**
+ * @file scene.cpp
+ * This file contains the implementation for the Scene class, which is responsible
+ * for managing game objects and rendering the scene.
+ */
+#include <algorithm>
+
 #include "components/light.h"
 #include "components/meshrenderer.h"
-#include <algorithm>
+#include "scene.h"
 
 void Scene::render(Shader &shader)
 {

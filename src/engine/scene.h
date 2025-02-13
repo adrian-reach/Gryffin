@@ -1,10 +1,16 @@
+/**
+ * @file scene.h
+ * @brief Scene class for managing game objects and rendering the scene
+ */
+
 #pragma once
+#include <algorithm>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "gameobject.h"
 #include "../renderer/shader.h"
-#include <memory>
-#include <vector>
-#include <string>
-#include <algorithm>
 
 class Scene
 {

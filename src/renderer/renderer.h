@@ -1,8 +1,14 @@
+/**
+ * @file renderer.h
+ * @brief Renderer class for handling rendering operations
+ */
+
 #pragma once
+#include <memory>
+
 #include "shader.h"
 #include "mesh.h"
 #include "camera.h"
-#include <memory>
 
 class Renderer
 {

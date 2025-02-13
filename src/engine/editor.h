@@ -1,13 +1,20 @@
+/**
+ * @file editor.h
+ * @brief Editor class for the engine
+ */
+
 #pragma once
+#include <memory>
+#include <string>
+#include <unordered_map>
+
 #include "scene.h"
 #include "gameobject.h"
 #include "components/meshrenderer.h"
 #include "components/light.h"
+
 #include <imgui.h>
 #include <imgui_stdlib.h>
-#include <memory>
-#include <string>
-#include <unordered_map>
 
 class Editor
 {

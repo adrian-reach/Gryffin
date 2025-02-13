@@ -1,3 +1,7 @@
+/**
+ * @file light.cpp
+ * @brief Light component for handling light sources
+ */
 #include "light.h"
 #include "../gameobject.h"
 

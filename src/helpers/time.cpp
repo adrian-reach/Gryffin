@@ -1,7 +1,6 @@
 /**
- * time.cpp
- * ---
- * Helper function to format a Unix timestamp into a human-readable date string.
+ * @file time.cpp
+ * Helper function related to time.
  */
 #include "time.h"
 #include <iomanip>

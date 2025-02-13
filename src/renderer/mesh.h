@@ -1,5 +1,10 @@
+/**
+ * @file mesh.h
+ * @brief Mesh class for handling mesh data
+ */
 #pragma once
 #include <vector>
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 

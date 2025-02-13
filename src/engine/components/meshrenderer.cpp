@@ -1,3 +1,7 @@
+/**
+ * @file meshrenderer.cpp
+ * @brief MeshRenderer component for rendering meshes
+ */
 #include "meshrenderer.h"
 #include "../gameobject.h"
 #include "../resourcemanager.h"

@@ -1,3 +1,8 @@
+/**
+ * @file camera.h
+ * @brief Camera class for handling camera transformations
+ */
+
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
