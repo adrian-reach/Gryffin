@@ -6,12 +6,20 @@ REM Ensure shader directory exists
 if not exist "src\shaders" mkdir "src\shaders"
 
 REM Build the executable
+set SUB_DIRECTORY_SOURCE_FILES =
+for %%f in (src/engine/game_objects/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
+for %%f in (src/engine/components/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
+
+@REM src/engine/components/light.cpp ^
+@REM src/engine/components/meshrenderer.cpp ^
+
+
+REM Build the executable
 g++ -g -O0 -o doomlike ^
 src/helpers/*.cpp ^
 src/renderer/*.cpp ^
 src/engine/*.cpp ^
-src/engine/components/light.cpp ^
-src/engine/components/meshrenderer.cpp ^
+%SUB_DIRECTORY_SOURCE_FILES % ^
 src/*.cpp ^
 include/glad/glad.c ^
 include/imgui/imgui.cpp ^

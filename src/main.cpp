@@ -180,7 +180,7 @@ int main(int argc, char **argv)
             else if (event.type == SDL_KEYDOWN)
             {
                 auto &camera = g_state.renderer->getCamera();
-                const float moveSpeed = 0.1f;
+                const float moveSpeed = 0.5f;
 
                 switch (event.key.keysym.sym)
                 {
