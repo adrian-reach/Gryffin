@@ -15,7 +15,7 @@ for %%f in (src/engine/components/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
 
 
 REM Build the executable
-g++ -g -O0 -o doomlike ^
+g++ -g -O0 -o editor ^
 src/helpers/*.cpp ^
 src/renderer/*.cpp ^
 src/engine/*.cpp ^

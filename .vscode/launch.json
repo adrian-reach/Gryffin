@@ -5,7 +5,7 @@
             "name": "Debug video_player",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/doomlike.exe",
+            "program": "${workspaceFolder}/editor.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
