@@ -1,5 +1,12 @@
+/**
+ * main.cpp
+ * ---
+ * Main entry point for the MetroidLike Editor application.
+ */
 #include <string>
+
 #include "errors.h"
+#include "helpers/logging.h"
 #include "renderer/renderer.h"
 #include "engine/scene.h"
 #include "engine/editor.h"
@@ -31,6 +38,8 @@ EngineState g_state;
 
 void initializeScene()
 {
+    logMessage(LogLevel::Info, "Initializing scene");
+
     // Create main scene
     g_state.activeScene = std::make_unique<Scene>("Main Scene");
     g_state.editor->setActiveScene(g_state.activeScene.get());
