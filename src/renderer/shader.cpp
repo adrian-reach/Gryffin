@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
+#include "../helpers/logging.h"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
@@ -89,7 +90,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     // Query and validate uniform locations before deleting shaders
     GLint numUniforms;
     glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &numUniforms);
-    printf("Active uniforms in shader program %d:\n", ID);
+    // printf("Active uniforms in shader program %d:\n", ID);
 
     // Pre-cache all uniform locations
     const char *expectedUniforms[] = {
@@ -101,12 +102,13 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         GLint location = glGetUniformLocation(ID, uniformName);
         if (location == -1)
         {
-            printf("Warning: Expected uniform '%s' not found in shader program\n", uniformName);
+            logMessage(LogLevel::Warning, "Expected uniform '%s' not found in shader program", uniformName);
+            // printf("Warning: Expected uniform '%s' not found in shader program\n", uniformName);
         }
         uniformLocations[uniformName] = location;
     }
 
-    // Print all active uniforms for debugging
+    // // Print all active uniforms for debugging
     // for (GLint i = 0; i < numUniforms; i++)
     // {
     //     GLchar name[128];
