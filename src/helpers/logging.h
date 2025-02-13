@@ -20,6 +20,26 @@ enum class LogLevel
     Error
 };
 
+inline void logMessage(LogLevel level, const std::string &message);
+
+#if __cplusplus >= 202002L
+#include <format>
+template <typename... Args>
+inline void logMessage(LogLevel level, const std::string &formatStr, Args &&...args)
+{
+    logMessage(level, std::format(formatStr, std::forward<Args>(args)...));
+}
+#else
+#include <cstdio>
+template <typename... Args>
+inline void logMessage(LogLevel level, const std::string &formatStr, Args... args)
+{
+    char buffer[1024];
+    std::snprintf(buffer, sizeof(buffer), formatStr.c_str(), args...);
+    logMessage(level, std::string(buffer));
+}
+#endif
+
 inline std::string currentDateTime()
 {
     auto now = std::chrono::system_clock::now();

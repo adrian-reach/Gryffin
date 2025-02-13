@@ -116,7 +116,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     //     GLenum type;
     //     glGetActiveUniform(ID, i, sizeof(name), NULL, &size, &type, name);
     //     GLint location = glGetUniformLocation(ID, name);
-    //     printf("  %s (location: %d)\n", name, location);
+    //     logMessage(LogLevel::Debug, "Active uniform: %s (location: %d)", name, location);
     // }
 
     // Clean up shader objects
