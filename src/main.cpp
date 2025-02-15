@@ -86,6 +86,7 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
+    // Create a window
     SDL_Window *window = SDL_CreateWindow("DoomLike Editor",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
