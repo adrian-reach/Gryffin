@@ -30,5 +30,28 @@ include/imgui/backends/imgui_impl_sdl2.cpp ^
 include/imgui/backends/imgui_impl_opengl3.cpp ^
 %INCLUDE_FLAGS% %LIB_FLAGS%
 
+@echo off
+setlocal enabledelayedexpansion
+
+REM Clean previous version info
+if exist version.txt del version.txt
+
+REM Version increment logic
+if not exist version_number.txt (
+    echo 1 > version_number.txt
+) else (
+    for /f %%i in (version_number.txt) do (
+        set /a "new_version=%%i+1"
+        echo !new_version! > version_number.txt
+    )
+)
+
+REM Generate version file
+git rev-parse --short HEAD >> version.txt
+git rev-parse --abbrev-ref HEAD >> version.txt
+type version_number.txt >> version.txt
+
+REM Rest of build commands...
+
 REM Copy shader files to build directory
 xcopy /y /i src\shaders\*.* .

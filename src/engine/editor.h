@@ -10,6 +10,7 @@
 
 #include "scene.h"
 #include "gameobject.h"
+#include "../version.h"
 #include "components/meshrenderer.h"
 #include "components/light.h"
 
@@ -84,6 +85,12 @@ private:
                 {
                     createLight();
                 }
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("About"))
+            {
+                ImGui::MenuItem(("Version: " + Engine::VERSION).c_str());
                 ImGui::EndMenu();
             }
 
