@@ -130,6 +130,7 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+    glEnable(GL_STENCIL_TEST);  // Enable stencil testing globally
 
     // Initialize ImGui
     IMGUI_CHECKVERSION();
@@ -218,7 +219,7 @@ int main(int argc, char **argv)
 
         // Clear buffers
         glClearColor(0.1f, 0.1f, 0.1f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);  // Clear stencil buffer too
 
         // Start ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -246,7 +247,7 @@ int main(int argc, char **argv)
             // Render scene
             if (g_state.activeScene)
             {
-                g_state.activeScene->render(*shader);
+                g_state.activeScene->render(*shader, g_state.editor->getSelectedObject());
             }
         }
 

@@ -210,6 +210,28 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
     }
 }
 
+glm::mat4 Shader::getUniformMat4(const std::string &name) const
+{
+    glm::mat4 value;
+    GLint location = getUniformLocation(name);
+    if (location != -1)
+    {
+        glGetUniformfv(ID, location, &value[0][0]);
+    }
+    return value;
+}
+
+glm::vec3 Shader::getUniformVec3(const std::string &name) const
+{
+    glm::vec3 value;
+    GLint location = getUniformLocation(name);
+    if (location != -1)
+    {
+        glGetUniformfv(ID, location, &value[0]);
+    }
+    return value;
+}
+
 void Shader::checkCompileErrors(unsigned int shader, std::string type)
 {
     int success;

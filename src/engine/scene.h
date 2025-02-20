@@ -39,7 +39,7 @@ public:
         }
     }
 
-    void render(Shader &shader);
+    void render(Shader &shader, GameObject *selectedObject = nullptr);
     void update(float deltaTime);
     void saveToFile(const std::string &path);
     void loadFromFile(const std::string &path);

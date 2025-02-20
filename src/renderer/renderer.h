@@ -33,6 +33,10 @@ public:
     glm::vec3 objectRotation{0.0f, 0.0f, 0.0f};
     glm::vec3 objectScale{1.0f, 1.0f, 1.0f};
 
+    // Outline properties
+    glm::vec3 outlineColor{1.0f, 0.5f, 0.0f};  // Orange outline by default
+    float outlineScale{1.05f};  // Scale factor for the outline effect
+
     // Render with specified mesh (true for sphere, false for cube)
     void render(bool useSphere = true);
 
@@ -44,6 +48,7 @@ private:
     void setupScene();
 
     std::shared_ptr<Shader> shader;
+    std::shared_ptr<Shader> outlineShader;  // Shader for rendering outlines
     std::shared_ptr<Mesh> cube;
     std::shared_ptr<Mesh> sphere;
     Camera camera;

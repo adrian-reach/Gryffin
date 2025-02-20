@@ -26,6 +26,11 @@ void Renderer::initialize(int width, int height)
     Resources().addShader("basic", basicShader);
     shader = basicShader;
 
+    // Create and initialize the outline shader
+    auto outlineShaderPtr = std::make_shared<Shader>("src/shaders/outline.vert", "src/shaders/outline.frag");
+    Resources().addShader("outline", outlineShaderPtr);
+    outlineShader = outlineShaderPtr;
+
     // Initialize camera
     camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
     camera.setRotation(0.0f, 0.0f);

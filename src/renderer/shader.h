@@ -23,6 +23,10 @@ public:
     void setVec3(const std::string &name, const glm::vec3 &value) const;
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
+    // Get uniform values
+    glm::mat4 getUniformMat4(const std::string &name) const;
+    glm::vec3 getUniformVec3(const std::string &name) const;
+
 public:
     // Get the shader program ID
     unsigned int getProgramID() const { return ID; }

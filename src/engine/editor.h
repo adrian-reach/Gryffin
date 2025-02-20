@@ -27,6 +27,8 @@ public:
         selectedObject = nullptr;
     }
 
+    GameObject* getSelectedObject() const { return selectedObject; }
+
     void update()
     {
         if (!activeScene)

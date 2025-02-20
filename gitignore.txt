@@ -1,5 +1,5 @@
 # Ignore .exe files
 *.exe
-/*.frag
-/*.vert
+# *.frag
+# *.vert
 *.ini
