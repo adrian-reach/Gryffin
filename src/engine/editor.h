@@ -13,6 +13,7 @@
 #include "../version.h"
 #include "components/meshrenderer.h"
 #include "components/light.h"
+#include "components/transform_component.h"
 
 #include <imgui.h>
 #include <imgui_stdlib.h>
@@ -161,71 +162,95 @@ private:
 
     void renderInspector()
     {
-        ImGui::Begin("Inspector");
-
-        if (selectedObject)
+        if (ImGui::Begin("Inspector"))
         {
-            // Name field
-            std::string name = selectedObject->name;
-            if (ImGui::InputText("Name", &name))
+            if (selectedObject)
             {
-                selectedObject->name = name;
-            }
+                // Object header
+                ImGui::Text("Selected: %s", selectedObject->name.c_str());
+                ImGui::Separator();
 
-            // Active toggle
-            bool isActive = selectedObject->isActive;
-            if (ImGui::Checkbox("Active", &isActive))
-            {
-                selectedObject->isActive = isActive;
-            }
-
-            // Static toggle
-            bool isStatic = selectedObject->isStatic;
-            if (ImGui::Checkbox("Static", &isStatic))
-            {
-                selectedObject->isStatic = isStatic;
-            }
-
-            // Transform
-            if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-            {
-                ImGui::DragFloat3("Position", &selectedObject->transform.position[0], 0.1f);
-                ImGui::DragFloat3("Rotation", &selectedObject->transform.rotation[0], 1.0f);
-                ImGui::DragFloat3("Scale", &selectedObject->transform.scale[0], 0.1f);
-            }
-
-            // Components
-            ImGui::Separator();
-            if (ImGui::Button("Add Component"))
-            {
-                ImGui::OpenPopup("AddComponentMenu");
-            }
-
-            if (ImGui::BeginPopup("AddComponentMenu"))
-            {
-                if (ImGui::MenuItem("Mesh Renderer"))
+                // Transform component
+                if (auto transform = selectedObject->getTransform())
                 {
-                    selectedObject->addComponent<MeshRenderer>();
-                }
-                if (ImGui::MenuItem("Light"))
-                {
-                    selectedObject->addComponent<Light>();
-                }
-                ImGui::EndPopup();
-            }
+                    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+                    {
+                        // Position
+                        glm::vec3 position = transform->position;
+                        if (ImGui::DragFloat3("Position", &position[0], 0.1f))
+                        {
+                            transform->position = position;
+                        }
 
-            // Render component editors
-            for (const auto &component : selectedObject->getAllComponents())
-            {
-                ImGui::PushID(component.get());
-                if (ImGui::CollapsingHeader(component->getTypeName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-                {
-                    component->onGUI();
+                        // Rotation (as Euler angles)
+                        glm::vec3 rotation = transform->getEulerAngles();
+                        if (ImGui::DragFloat3("Rotation", &rotation[0], 1.0f))
+                        {
+                            transform->setEulerAngles(rotation);
+                        }
+
+                        // Scale
+                        glm::vec3 scale = transform->scale;
+                        if (ImGui::DragFloat3("Scale", &scale[0], 0.1f))
+                        {
+                            transform->scale = scale;
+                        }
+                    }
                 }
-                ImGui::PopID();
+
+                // Render GUI for all components
+                for (const auto& component : selectedObject->getAllComponents())
+                {
+                    ImGui::PushID(component.get());
+                    if (ImGui::CollapsingHeader(component->getTypeName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+                    {
+                        component->onGUI();
+                    }
+                    ImGui::PopID();
+                }
+
+                // Name field
+                std::string name = selectedObject->name;
+                if (ImGui::InputText("Name", &name))
+                {
+                    selectedObject->name = name;
+                }
+
+                // Active toggle
+                bool isActive = selectedObject->isActive;
+                if (ImGui::Checkbox("Active", &isActive))
+                {
+                    selectedObject->isActive = isActive;
+                }
+
+                // Static toggle
+                bool isStatic = selectedObject->isStatic;
+                if (ImGui::Checkbox("Static", &isStatic))
+                {
+                    selectedObject->isStatic = isStatic;
+                }
+
+                // Components
+                ImGui::Separator();
+                if (ImGui::Button("Add Component"))
+                {
+                    ImGui::OpenPopup("AddComponentMenu");
+                }
+
+                if (ImGui::BeginPopup("AddComponentMenu"))
+                {
+                    if (ImGui::MenuItem("Mesh Renderer"))
+                    {
+                        selectedObject->addComponent<MeshRenderer>();
+                    }
+                    if (ImGui::MenuItem("Light"))
+                    {
+                        selectedObject->addComponent<Light>();
+                    }
+                    ImGui::EndPopup();
+                }
             }
         }
-
         ImGui::End();
     }
 

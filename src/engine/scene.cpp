@@ -28,7 +28,7 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
     if (!lights.empty())
     {
         auto mainLight = lights[0];
-        shader.setVec3("lightPos", mainLight->getPosition());
+        shader.setVec3("lightPos", mainLight->getOwner()->getPosition());
         shader.setVec3("lightColor", mainLight->getColor() * mainLight->getIntensity());
     }
     else
@@ -38,95 +38,35 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
         shader.setVec3("lightColor", glm::vec3(1.0f));
     }
 
-    // Render function to handle both normal and outline passes
-    auto renderObjects = [&](bool isStatic) {
-        for (const auto &gameObject : gameObjects)
-        {
-            if (!gameObject->isActive || gameObject->isStatic != isStatic)
-                continue;
-
-            // Set model matrix
-            shader.setMat4("model", gameObject->transform.getModelMatrix());
-
-            // If this is the selected object and we have an outline shader active,
-            // we need to render it with a scale factor
-            if (gameObject.get() == selectedObject && shader.getProgramID() == Resources().getShader("outline")->getProgramID())
-            {
-                shader.setFloat("scaleFactor", 1.05f); // Slightly larger for outline
-            }
-            else
-            {
-                shader.setFloat("scaleFactor", 1.0f); // Normal size for regular rendering
-            }
-
-            // Render components
-            gameObject->render(shader);
-        }
-    };
-
-    // First render static objects
-    renderObjects(true);
-
-    // Then render dynamic objects
-    renderObjects(false);
-
-    // If we have a selected object and we're using the main shader,
-    // render the outline pass
-    if (selectedObject && shader.getProgramID() == Resources().getShader("basic")->getProgramID())
+    // Render all objects
+    for (const auto &gameObject : gameObjects)
     {
-        // Switch to outline shader
-        auto outlineShader = Resources().getShader("outline");
-        if (outlineShader)
-        {
-            // First pass - render the object normally with stencil write
-            shader.use();
-            glEnable(GL_STENCIL_TEST);
-            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            glStencilMask(0xFF);
-            
-            // Set model matrix for selected object
-            auto modelMatrix = selectedObject->transform.getModelMatrix();
-            shader.setMat4("model", modelMatrix);
-            
-            // Render the selected object to the stencil buffer
-            if (auto renderer = selectedObject->getComponent<MeshRenderer>())
-            {
-                renderer->render(shader);
-            }
+        if (!gameObject->isActive)
+            continue;
 
-            // Second pass - render the scaled outline
-            outlineShader->use();
+        // Set model matrix from TransformComponent
+        shader.setMat4("model", gameObject->getModelMatrix());
+
+        // Render mesh if present
+        if (auto meshRenderer = gameObject->getComponent<MeshRenderer>())
+        {
+            meshRenderer->render(shader);
+        }
+    }
+
+    // After rendering all objects, render the gizmo for selected object
+    if (selectedObject)
+    {
+        if (auto transform = selectedObject->getTransform())
+        {
+            // Get camera component from active camera
+            // TODO: Implement proper camera management
+            glm::mat4 view = glm::lookAt(glm::vec3(0, 5, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+            glm::mat4 proj = glm::perspective(glm::radians(45.0f), 
+                (float)ImGui::GetIO().DisplaySize.x / (float)ImGui::GetIO().DisplaySize.y, 
+                0.1f, 1000.0f);
             
-            // Copy view/projection matrices from main shader
-            outlineShader->setMat4("projection", shader.getUniformMat4("projection"));
-            outlineShader->setMat4("view", shader.getUniformMat4("view"));
-            
-            // Set outline color
-            outlineShader->setVec3("outlineColor", glm::vec3(1.0f, 0.5f, 0.0f)); // Orange outline
-            
-            // Only render where the stencil buffer is not 1
-            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-            glStencilMask(0x00); // Disable writing to stencil buffer
-            glDisable(GL_DEPTH_TEST);
-            
-            // Set model matrix and scale factor for outline
-            outlineShader->setMat4("model", modelMatrix);
-            outlineShader->setFloat("scaleFactor", 1.05f);
-            
-            // Render the outline
-            if (auto renderer = selectedObject->getComponent<MeshRenderer>())
-            {
-                renderer->render(*outlineShader);
-            }
-            
-            // Restore state
-            glStencilMask(0xFF);
-            glStencilFunc(GL_ALWAYS, 1, 0xFF);
-            glEnable(GL_DEPTH_TEST);
-            
-            // Switch back to main shader
-            shader.use();
+            transform->manipulateTransform(view, proj);
         }
     }
 }

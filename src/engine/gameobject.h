@@ -1,6 +1,6 @@
 #pragma once
-#include "transform.h"
 #include "component.h"
+#include "components/transform_component.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -8,22 +8,60 @@
 #include <algorithm>
 #include <atomic>
 
-class GameObject
-{
+class GameObject {
 public:
-    GameObject(const std::string &objectName = "GameObject")
+    GameObject(const std::string& objectName = "GameObject")
         : id(nextId++), name(objectName), isStatic(false), isActive(true)
     {
-        // Append ID to name to make it unique
         name = objectName + " (" + std::to_string(id) + ")";
+        transformComponent = addComponent<TransformComponent>();
     }
 
     // Object properties
-    const uint64_t id; // Unique identifier
+    const uint64_t id;
     std::string name;
-    Transform transform;
-    bool isStatic; // For optimization
-    bool isActive; // For enabling/disabling objects
+    bool isStatic;
+    bool isActive;
+
+    // Transform operations
+    void setPosition(const glm::vec3& pos) {
+        if (transformComponent) {
+            transformComponent->position = pos;
+        }
+    }
+
+    void setRotation(const glm::vec3& eulerAngles) {
+        if (transformComponent) {
+            transformComponent->setEulerAngles(eulerAngles);
+        }
+    }
+
+    void setScale(const glm::vec3& scl) {
+        if (transformComponent) {
+            transformComponent->scale = scl;
+        }
+    }
+
+    // Getters
+    glm::vec3 getPosition() const {
+        return transformComponent ? transformComponent->position : glm::vec3(0.0f);
+    }
+
+    glm::vec3 getRotation() const {
+        return transformComponent ? transformComponent->getEulerAngles() : glm::vec3(0.0f);
+    }
+
+    glm::vec3 getScale() const {
+        return transformComponent ? transformComponent->scale : glm::vec3(1.0f);
+    }
+
+    glm::mat4 getModelMatrix() const {
+        return transformComponent ? transformComponent->getLocalMatrix() : glm::mat4(1.0f);
+    }
+
+    TransformComponent* getTransform() const {
+        return transformComponent;
+    }
 
     // Component management
     template <typename T>
@@ -132,9 +170,7 @@ public:
     }
 
 private:
+    TransformComponent* transformComponent;
     std::vector<std::unique_ptr<Component>> components;
-    static std::atomic<uint64_t> nextId; // Static counter for generating unique IDs
+    static inline std::atomic<uint64_t> nextId{0};
 };
-
-// Initialize static member
-inline std::atomic<uint64_t> GameObject::nextId{0};

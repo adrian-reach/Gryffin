@@ -47,7 +47,7 @@ void initializeScene()
     // Create a light
     auto lightObj = g_state.activeScene->createGameObject("Main Light");
     auto light = lightObj->addComponent<Light>();
-    lightObj->transform.position = glm::vec3(2.0f, 2.0f, 2.0f);
+    lightObj->setPosition(glm::vec3(2.0f, 2.0f, 2.0f));
     light->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
     light->setIntensity(1.0f);
 
@@ -56,13 +56,13 @@ void initializeScene()
     auto cubeMesh = cubeObj->addComponent<MeshRenderer>();
     cubeMesh->setMesh(Resources().getMesh("Cube"));
     cubeMesh->setColor(glm::vec3(0.7f, 0.2f, 0.2f));
-    cubeObj->transform.position = glm::vec3(1.0f, 0.0f, 0.0f);
+    cubeObj->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 
     auto sphereObj = g_state.activeScene->createGameObject("Sphere");
     auto sphereMesh = sphereObj->addComponent<MeshRenderer>();
     sphereMesh->setMesh(Resources().getMesh("Sphere"));
     sphereMesh->setColor(glm::vec3(0.2f, 0.7f, 0.2f));
-    sphereObj->transform.position = glm::vec3(-1.0f, 0.0f, 0.0f);
+    sphereObj->setPosition(glm::vec3(-1.0f, 0.0f, 0.0f));
 }
 
 int main(int argc, char **argv)

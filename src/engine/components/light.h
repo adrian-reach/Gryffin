@@ -1,7 +1,3 @@
-/**
- * @file light.h
- * @brief Light component for handling light sources
- */
 #pragma once
 #include <string>
 
@@ -10,6 +6,7 @@
 
 #include "../component.h"
 #include "../gameobject.h"
+#include "transform_component.h"
 
 class Light : public Component
 {
@@ -48,6 +45,16 @@ public:
             type = static_cast<Type>(currentType);
         }
 
+        // Position (using TransformComponent)
+        if (auto transform = owner->getTransform())
+        {
+            glm::vec3 pos = transform->position;
+            if (ImGui::DragFloat3("Position", &pos[0], 0.1f))
+            {
+                transform->position = pos;
+            }
+        }
+
         // Light properties
         ImGui::ColorEdit3("Color", &color[0]);
         ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f, 10.0f);
@@ -63,13 +70,6 @@ public:
         }
 
         ImGui::Checkbox("Cast Shadows", &castShadows);
-
-        // Show position
-        glm::vec3 pos = owner->transform.position;
-        if (ImGui::DragFloat3("Position", &pos[0], 0.1f))
-        {
-            owner->transform.position = pos;
-        }
     }
 
     std::string getTypeName() const override
@@ -99,13 +99,21 @@ public:
     // Get light direction (for directional and spot lights)
     glm::vec3 getDirection() const
     {
-        return owner->transform.forward();
+        if (auto transform = owner->getTransform())
+        {
+            return transform->forward();
+        }
+        return glm::vec3(0.0f, -1.0f, 0.0f); // Default down direction
     }
 
     // Get light position (for point and spot lights)
     glm::vec3 getPosition() const
     {
-        return owner->transform.position;
+        if (auto transform = owner->getTransform())
+        {
+            return transform->position;
+        }
+        return glm::vec3(0.0f);
     }
 
 private:

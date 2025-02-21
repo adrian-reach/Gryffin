@@ -1,5 +1,5 @@
 @echo off
-set INCLUDE_FLAGS=-Iinclude -Iinclude/imgui -Iinclude/imgui/backends -Iinclude/SDL2 -Iinclude/glm -Iinclude/ffmpeg -Iinclude/glad -Iinclude/KHR -Iinclude/src
+set INCLUDE_FLAGS=-Iinclude -Iinclude/imgui -Iinclude/imgui/backends -Iinclude/SDL2 -Iinclude/glm -Iinclude/ffmpeg -Iinclude/glad -Iinclude/KHR -Iinclude/src -Iinclude/ImGuizmo
 set LIB_FLAGS=-Llib -lSDL2 -lavcodec -lavformat -lswscale -lswresample -lavutil -lopengl32 -lgdi32 -luser32 -lws2_32 -lz -lwinhttp -lstdc++ -lm -L"C:\Program Files\OpenSSL-Win64\lib\VC\MD"
 
 REM Ensure shader directory exists
@@ -28,6 +28,7 @@ include/imgui/imgui_widgets.cpp ^
 include/imgui/imgui_tables.cpp ^
 include/imgui/backends/imgui_impl_sdl2.cpp ^
 include/imgui/backends/imgui_impl_opengl3.cpp ^
+include/ImGuizmo/ImGuizmo.cpp ^
 %INCLUDE_FLAGS% %LIB_FLAGS%
 
 @echo off

@@ -11,6 +11,7 @@
 
 #include "gameobject.h"
 #include "../renderer/shader.h"
+#include "components/transform_component.h"
 
 class Scene
 {
@@ -39,7 +40,8 @@ public:
         }
     }
 
-    void render(Shader &shader, GameObject *selectedObject = nullptr);
+    void render(Shader& shader, GameObject* selectedObject = nullptr);
+
     void update(float deltaTime);
     void saveToFile(const std::string &path);
     void loadFromFile(const std::string &path);
