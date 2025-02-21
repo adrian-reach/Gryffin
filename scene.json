@@ -1,0 +1,125 @@
+{
+    "gameObjects": [
+        {
+            "components": [
+                {
+                    "position": {
+                        "x": 2.0,
+                        "y": 2.0,
+                        "z": 2.0
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "type": "TransformComponent"
+                },
+                {
+                    "type": "Light"
+                }
+            ],
+            "id": 0,
+            "isActive": true,
+            "isStatic": false,
+            "name": "Main Light (0)"
+        },
+        {
+            "components": [
+                {
+                    "position": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "type": "TransformComponent"
+                },
+                {
+                    "type": "MeshRenderer"
+                }
+            ],
+            "id": 1,
+            "isActive": true,
+            "isStatic": false,
+            "name": "Cube (1)"
+        },
+        {
+            "components": [
+                {
+                    "position": {
+                        "x": -1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "type": "TransformComponent"
+                },
+                {
+                    "type": "MeshRenderer"
+                }
+            ],
+            "id": 2,
+            "isActive": true,
+            "isStatic": false,
+            "name": "Sphere (2)"
+        },
+        {
+            "components": [
+                {
+                    "position": {
+                        "x": -4.2579345703125,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotation": {
+                        "w": 1.0,
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "type": "TransformComponent"
+                },
+                {
+                    "type": "MeshRenderer"
+                }
+            ],
+            "id": 3,
+            "isActive": true,
+            "isStatic": false,
+            "name": "Cube (3)"
+        }
+    ],
+    "name": "Main Scene"
+}

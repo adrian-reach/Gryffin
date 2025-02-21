@@ -8,6 +8,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <imgui.h>
 #include "ImGuizmo/ImGuizmo.h"
+#include <json/json.hpp>
 
 class TransformComponent : public Component {
 public:
@@ -44,9 +45,28 @@ public:
         glm::vec3 direction = glm::normalize(target - position);
         rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
     }
+
+    // Gizmo operations
+    ImGuizmo::OPERATION getGizmoOperation() const { return gizmoOperation; }
+    void setGizmoOperation(ImGuizmo::OPERATION op) { gizmoOperation = op; }
     
     std::string getTypeName() const override { return "TransformComponent"; }
     
+    // Serialization
+    void serialize(nlohmann::json& j) const override {
+        Component::serialize(j);
+        j["position"] = position;
+        j["rotation"] = rotation;
+        j["scale"] = scale;
+    }
+
+    void deserialize(const nlohmann::json& j) override {
+        Component::deserialize(j);
+        j.at("position").get_to(position);
+        j.at("rotation").get_to(rotation);
+        j.at("scale").get_to(scale);
+    }
+
     void onGUI() override {
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             // Position

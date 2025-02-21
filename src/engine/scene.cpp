@@ -4,10 +4,11 @@
  * for managing game objects and rendering the scene.
  */
 #include <algorithm>
-
+#include <fstream>
 #include "components/light.h"
 #include "components/meshrenderer.h"
 #include "scene.h"
+#include <json/json.hpp>
 
 void Scene::render(Shader &shader, GameObject *selectedObject)
 {
@@ -47,10 +48,13 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
         // Set model matrix from TransformComponent
         shader.setMat4("model", gameObject->getModelMatrix());
 
-        // Render mesh if present
-        if (auto meshRenderer = gameObject->getComponent<MeshRenderer>())
+        // Render all components
+        for (const auto &component : gameObject->getAllComponents())
         {
-            meshRenderer->render(shader);
+            if (component->isEnabled())
+            {
+                component->render(shader);
+            }
         }
     }
 
@@ -93,10 +97,52 @@ void Scene::update(float deltaTime)
 
 void Scene::saveToFile(const std::string &path)
 {
-    // TODO: Implement scene serialization
+    try {
+        // Create JSON object
+        json j;
+        serialize(j);
+        
+        // Open file for writing
+        std::ofstream file(path);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file for writing: " + path);
+        }
+        
+        // Write JSON with pretty printing (4 spaces indent)
+        file << std::setw(4) << j << std::endl;
+        
+        if (file.fail()) {
+            throw std::runtime_error("Failed to write to file: " + path);
+        }
+    }
+    catch (const std::exception& e) {
+        // TODO: Add proper error handling/logging
+        printf("Error saving scene: %s\n", e.what());
+    }
 }
 
 void Scene::loadFromFile(const std::string &path)
 {
-    // TODO: Implement scene deserialization
+    try {
+        // Open file for reading
+        std::ifstream file(path);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file for reading: " + path);
+        }
+        
+        // Parse JSON
+        json j;
+        file >> j;
+        
+        if (file.fail()) {
+            throw std::runtime_error("Failed to read from file: " + path);
+        }
+        
+        // Deserialize scene
+        deserialize(j);
+    }
+    catch (const std::exception& e) {
+        // TODO: Add proper error handling/logging
+        printf("Error loading scene: %s\n", e.what());
+    }
 }
