@@ -11,7 +11,7 @@
 
 class TransformComponent : public Component {
 public:
-    TransformComponent() = default;
+    TransformComponent() : gizmoOperation(ImGuizmo::TRANSLATE) {}
     
     // Core transform properties
     glm::vec3 position{0.0f};
@@ -67,28 +67,26 @@ public:
                 scale = scl;
             }
 
-            // Gizmo manipulation mode
-            if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE)) {
-                gizmoOperation = ImGuizmo::TRANSLATE;
-            }
+            ImGui::Separator();
+            ImGui::Text("Gizmo Mode:");
+            
+            // Gizmo operation radio buttons
+            bool isTranslate = gizmoOperation == ImGuizmo::TRANSLATE;
+            bool isRotate = gizmoOperation == ImGuizmo::ROTATE;
+            bool isScale = gizmoOperation == ImGuizmo::SCALE;
+
+            if (ImGui::RadioButton("Translate", &isTranslate)) gizmoOperation = ImGuizmo::TRANSLATE;
             ImGui::SameLine();
-            if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE)) {
-                gizmoOperation = ImGuizmo::ROTATE;
-            }
+            if (ImGui::RadioButton("Rotate", &isRotate)) gizmoOperation = ImGuizmo::ROTATE;
             ImGui::SameLine();
-            if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE)) {
-                gizmoOperation = ImGuizmo::SCALE;
-            }
+            if (ImGui::RadioButton("Scale", &isScale)) gizmoOperation = ImGuizmo::SCALE;
         }
     }
 
     void manipulateTransform(const glm::mat4& view, const glm::mat4& proj) {
         glm::mat4 transform = getLocalMatrix();
         
-        ImGuizmo::SetOrthographic(false);
-        ImGuizmo::SetDrawlist();
-        ImGuizmo::SetRect(0, 0, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
-        
+        // Manipulate transform with ImGuizmo
         if (ImGuizmo::Manipulate(
             glm::value_ptr(view),
             glm::value_ptr(proj),
@@ -112,5 +110,5 @@ public:
     }
 
 private:
-    static inline ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
+    ImGuizmo::OPERATION gizmoOperation;
 };

@@ -54,18 +54,27 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
         }
     }
 
-    // After rendering all objects, render the gizmo for selected object
+    // After rendering all objects, handle gizmo manipulation for selected object
     if (selectedObject)
     {
         if (auto transform = selectedObject->getTransform())
         {
-            // Get camera component from active camera
-            // TODO: Implement proper camera management
+            // Get current view/projection matrices
+            // TODO: Replace with proper camera system
             glm::mat4 view = glm::lookAt(glm::vec3(0, 5, 10), glm::vec3(0), glm::vec3(0, 1, 0));
-            glm::mat4 proj = glm::perspective(glm::radians(45.0f), 
-                (float)ImGui::GetIO().DisplaySize.x / (float)ImGui::GetIO().DisplaySize.y, 
-                0.1f, 1000.0f);
+            float aspectRatio = ImGui::GetIO().DisplaySize.x / ImGui::GetIO().DisplaySize.y;
+            glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
+
+            // Begin ImGuizmo frame
+            ImGuizmo::BeginFrame();
             
+            // Set the viewport for ImGuizmo (should match your rendering viewport)
+            ImGuizmo::SetRect(0, 0, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
+            
+            // Set orthographic mode based on camera
+            ImGuizmo::SetOrthographic(false);
+
+            // Manipulate transform
             transform->manipulateTransform(view, proj);
         }
     }
