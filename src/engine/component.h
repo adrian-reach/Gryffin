@@ -5,41 +5,52 @@
 
 #pragma once
 #include <string>
-#include "iserializable.h"
+#include <memory>
 #include "serialization.h"
+#include "../renderer/shader.h"
 
+// Forward declarations
 class GameObject;
 class Shader;
 
 class Component : public ISerializable {
+protected:
+    GameObject* owner;
+    bool enabled;
+
 public:
+    Component() : owner(nullptr), enabled(true) {}
     virtual ~Component() = default;
-    
-    // Core component interface
-    virtual void start() {} // Called when component is first created
+
     virtual void update(float deltaTime) {}
     virtual void render(Shader& shader) {}
-    virtual void onGUI() {}                // For editor property editing
+    virtual void onGUI() {}
+
+    void setOwner(GameObject* newOwner) {
+        owner = newOwner;
+    }
+
+    GameObject* getOwner() const {
+        return owner;
+    }
+
+    bool isEnabled() const {
+        return enabled;
+    }
+
+    void setEnabled(bool value) {
+        enabled = value;
+    }
+
     virtual std::string getTypeName() const = 0;
 
-    // Owner management
-    void setOwner(GameObject* owner) { this->owner = owner; }
-    GameObject* getOwner() const { return owner; }
-
-    // Enable/Disable component
-    bool isEnabled() const { return enabled; }
-    void setEnabled(bool value) { enabled = value; }
-
-    // Default serialization (override in derived classes)
+    // Serialization
     virtual void serialize(json& j) const override {
         j["type"] = getTypeName();
+        j["enabled"] = enabled;
     }
 
     virtual void deserialize(const json& j) override {
-        // Base component has no data to deserialize
+        enabled = j["enabled"].get<bool>();
     }
-
-protected:
-    GameObject* owner = nullptr;
-    bool enabled = true;
 };

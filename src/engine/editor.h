@@ -320,9 +320,29 @@ private:
             }
         }
 
+        ImGui::SameLine();
+
+        if (ImGui::Button("Load Scene"))
+        {
+            if (activeScene) {
+                if (!activeScene->loadFromFile("scene.json")) {
+                    ImGui::OpenPopup("LoadError");
+                }
+            }
+        }
+
         // Save success popup
         if (ImGui::BeginPopupModal("SaveSuccess", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
             ImGui::Text("Scene saved successfully to scene.json!");
+            if (ImGui::Button("OK")) {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
+        // Load error popup
+        if (ImGui::BeginPopupModal("LoadError", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("Failed to load scene from scene.json.\nCheck the console for details.");
             if (ImGui::Button("OK")) {
                 ImGui::CloseCurrentPopup();
             }

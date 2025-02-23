@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 #include "components/transform_component.h"
+#include "components/meshrenderer.h"
+#include "components/light.h"
 #include "serialization.h"
 #include <memory>
 #include <vector>
@@ -8,10 +10,6 @@
 #include <typeinfo>
 #include <algorithm>
 #include <atomic>
-
-// Forward declarations
-class Light;
-class MeshRenderer;
 
 class GameObject : public ISerializable {
 public:
@@ -23,7 +21,7 @@ public:
     }
 
     // Object properties
-    const uint64_t id;
+    uint64_t id;  // Removed const to allow deserialization
     std::string name;
     bool isStatic;
     bool isActive;
@@ -76,7 +74,9 @@ public:
         auto component = std::make_unique<T>();
         T* componentPtr = component.get();
         component->setOwner(this);
-        components.push_back(std::move(component));
+        
+        // Convert to base class pointer before moving into vector
+        components.push_back(std::unique_ptr<Component>(component.release()));
         
         if (auto transform = dynamic_cast<TransformComponent*>(componentPtr)) {
             transformComponent = transform;
@@ -97,6 +97,11 @@ public:
 
     const std::vector<std::unique_ptr<Component>>& getAllComponents() const {
         return components;
+    }
+
+    void clearComponents() {
+        components.clear();
+        transformComponent = nullptr;
     }
 
     // Update
@@ -126,10 +131,50 @@ public:
         j["components"] = componentsArray;
     }
 
-    void deserialize(const json& j) override;  // Definition moved to cpp file
+    void deserialize(const json& j) override {
+        // Clear existing components first
+        clearComponents();
+
+        // Deserialize basic properties
+        id = j["id"].get<uint64_t>();
+        name = j["name"].get<std::string>();
+        isStatic = j["isStatic"].get<bool>();
+        isActive = j["isActive"].get<bool>();
+
+        // Deserialize components
+        const auto& componentsArray = j["components"];
+        for (const auto& componentJson : componentsArray) {
+            std::string typeName = componentJson["type"].get<std::string>();
+            
+            std::unique_ptr<Component> component;
+            
+            // Create appropriate component type
+            if (typeName == "TransformComponent") {
+                component = std::make_unique<TransformComponent>();
+                transformComponent = static_cast<TransformComponent*>(component.get());
+            }
+            else if (typeName == "MeshRenderer") {
+                component = std::make_unique<MeshRenderer>();
+            }
+            else if (typeName == "Light") {
+                component = std::make_unique<Light>();
+            }
+            
+            if (component) {
+                component->setOwner(this);
+                component->deserialize(componentJson);
+                components.push_back(std::move(component));
+            }
+        }
+
+        // Ensure we have a transform component
+        if (!transformComponent) {
+            transformComponent = addComponent<TransformComponent>();
+        }
+    }
 
 private:
     TransformComponent* transformComponent;
     std::vector<std::unique_ptr<Component>> components;
-    static std::atomic<uint64_t> nextId;  // Definition moved to cpp file
+    static std::atomic<uint64_t> nextId;
 };

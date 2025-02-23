@@ -12,12 +12,17 @@
 
 class TransformComponent : public Component {
 public:
-    TransformComponent() : gizmoOperation(ImGuizmo::TRANSLATE) {}
+    TransformComponent() : 
+        position(0.0f),
+        rotation(1.0f, 0.0f, 0.0f, 0.0f),  // Identity quaternion
+        scale(1.0f),
+        gizmoOperation(ImGuizmo::TRANSLATE) 
+    {}
     
     // Core transform properties
-    glm::vec3 position{0.0f};
-    glm::quat rotation{1.0f, 0.0f, 0.0f, 0.0f};
-    glm::vec3 scale{1.0f};
+    glm::vec3 position;
+    glm::quat rotation;
+    glm::vec3 scale;
     
     // Local space vectors
     glm::vec3 forward() const { return glm::rotate(rotation, glm::vec3(0.0f, 0.0f, -1.0f)); }
@@ -26,7 +31,8 @@ public:
     
     // Transform matrices
     glm::mat4 getLocalMatrix() const {
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, position);
         transform = transform * glm::toMat4(rotation);
         transform = glm::scale(transform, scale);
         return transform;
@@ -34,7 +40,8 @@ public:
 
     // Utility functions
     void setEulerAngles(const glm::vec3& eulerDegrees) {
-        rotation = glm::quat(glm::radians(eulerDegrees));
+        glm::vec3 eulerRadians = glm::radians(eulerDegrees);
+        rotation = glm::quat(eulerRadians);
     }
 
     glm::vec3 getEulerAngles() const {
@@ -55,16 +62,30 @@ public:
     // Serialization
     void serialize(nlohmann::json& j) const override {
         Component::serialize(j);
-        j["position"] = position;
-        j["rotation"] = rotation;
-        j["scale"] = scale;
+        j["position"] = {{"x", position.x}, {"y", position.y}, {"z", position.z}};
+        j["rotation"] = {{"w", rotation.w}, {"x", rotation.x}, {"y", rotation.y}, {"z", rotation.z}};
+        j["scale"] = {{"x", scale.x}, {"y", scale.y}, {"z", scale.z}};
     }
 
     void deserialize(const nlohmann::json& j) override {
         Component::deserialize(j);
-        j.at("position").get_to(position);
-        j.at("rotation").get_to(rotation);
-        j.at("scale").get_to(scale);
+        
+        // Position
+        position.x = j["position"]["x"];
+        position.y = j["position"]["y"];
+        position.z = j["position"]["z"];
+        
+        // Rotation - ensure we get a valid quaternion
+        rotation.w = j["rotation"]["w"];
+        rotation.x = j["rotation"]["x"];
+        rotation.y = j["rotation"]["y"];
+        rotation.z = j["rotation"]["z"];
+        rotation = glm::normalize(rotation);  // Ensure unit quaternion
+        
+        // Scale
+        scale.x = j["scale"]["x"];
+        scale.y = j["scale"]["y"];
+        scale.z = j["scale"]["z"];
     }
 
     void onGUI() override {
@@ -123,7 +144,7 @@ public:
             
             if (glm::decompose(transform, newScale, newRotation, newPosition, skew, perspective)) {
                 position = newPosition;
-                rotation = newRotation;
+                rotation = glm::normalize(newRotation);  // Ensure unit quaternion
                 scale = newScale;
             }
         }

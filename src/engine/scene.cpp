@@ -5,9 +5,11 @@
  */
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include "components/light.h"
 #include "components/meshrenderer.h"
 #include "scene.h"
+#include "../helpers/logging.h"
 #include <json/json.hpp>
 
 void Scene::render(Shader &shader, GameObject *selectedObject)
@@ -16,7 +18,7 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
     std::vector<Light *> lights;
     for (const auto &gameObject : gameObjects)
     {
-        if (!gameObject->isActive)
+        if (!gameObject || !gameObject->isActive)
             continue;
 
         if (auto light = gameObject->getComponent<Light>())
@@ -42,7 +44,7 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
     // Render all objects
     for (const auto &gameObject : gameObjects)
     {
-        if (!gameObject->isActive)
+        if (!gameObject || !gameObject->isActive)
             continue;
 
         // Set model matrix from TransformComponent
@@ -51,7 +53,7 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
         // Render all components
         for (const auto &component : gameObject->getAllComponents())
         {
-            if (component->isEnabled())
+            if (component && component->isEnabled())
             {
                 component->render(shader);
             }
@@ -88,11 +90,20 @@ void Scene::update(float deltaTime)
 {
     for (const auto &gameObject : gameObjects)
     {
-        if (gameObject->isActive)
+        if (gameObject && gameObject->isActive)
         {
             gameObject->update(deltaTime);
         }
     }
+}
+
+void Scene::clearScene() {
+    for (auto& gameObject : gameObjects) {
+        if (gameObject) {
+            gameObject->clearComponents();
+        }
+    }
+    gameObjects.clear();
 }
 
 void Scene::saveToFile(const std::string &path)
@@ -114,20 +125,22 @@ void Scene::saveToFile(const std::string &path)
         if (file.fail()) {
             throw std::runtime_error("Failed to write to file: " + path);
         }
+
+        logMessage(LogLevel::Info, "Scene saved successfully to {0}", path);
     }
     catch (const std::exception& e) {
-        // TODO: Add proper error handling/logging
-        printf("Error saving scene: %s\n", e.what());
+        logMessage(LogLevel::Error, "Failed to save scene: {0}", e.what());
     }
 }
 
-void Scene::loadFromFile(const std::string &path)
+bool Scene::loadFromFile(const std::string &path)
 {
     try {
         // Open file for reading
         std::ifstream file(path);
         if (!file.is_open()) {
-            throw std::runtime_error("Failed to open file for reading: " + path);
+            logMessage(LogLevel::Error, "Failed to open file for reading: {0}", path);
+            return false;
         }
         
         // Parse JSON
@@ -135,14 +148,33 @@ void Scene::loadFromFile(const std::string &path)
         file >> j;
         
         if (file.fail()) {
-            throw std::runtime_error("Failed to read from file: " + path);
+            logMessage(LogLevel::Error, "Failed to read from file: {0}", path);
+            return false;
         }
+
+        // Store current state in case we need to restore it
+        json currentState;
+        serialize(currentState);
         
-        // Deserialize scene
-        deserialize(j);
+        try {
+            clearScene();  // Clear existing scene properly
+            deserialize(j);
+            logMessage(LogLevel::Info, "Scene loaded successfully from {0}", path);
+            return true;
+        }
+        catch (const std::exception& e) {
+            logMessage(LogLevel::Error, "Failed to deserialize scene, restoring previous state: {0}", e.what());
+            clearScene();  // Clear any partial state
+            deserialize(currentState);
+            return false;
+        }
+    }
+    catch (const json::parse_error& e) {
+        logMessage(LogLevel::Error, "Failed to parse scene file {0}: {1}", path, e.what());
+        return false;
     }
     catch (const std::exception& e) {
-        // TODO: Add proper error handling/logging
-        printf("Error loading scene: %s\n", e.what());
+        logMessage(LogLevel::Error, "Failed to load scene from {0}: {1}", path, e.what());
+        return false;
     }
 }

@@ -3,8 +3,9 @@
         {
             "components": [
                 {
+                    "enabled": true,
                     "position": {
-                        "x": 2.0,
+                        "x": 1.2000000476837158,
                         "y": 2.0,
                         "z": 2.0
                     },
@@ -22,17 +23,27 @@
                     "type": "TransformComponent"
                 },
                 {
-                    "type": "Light"
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "enabled": true,
+                    "intensity": 1.0,
+                    "range": 10.0,
+                    "spotAngle": 45.0,
+                    "type": 0
                 }
             ],
-            "id": 0,
+            "id": 1,
             "isActive": true,
             "isStatic": false,
-            "name": "Main Light (0)"
+            "name": "Main Light (1)"
         },
         {
             "components": [
                 {
+                    "enabled": true,
                     "position": {
                         "x": 1.0,
                         "y": 0.0,
@@ -52,17 +63,26 @@
                     "type": "TransformComponent"
                 },
                 {
-                    "type": "MeshRenderer"
+                    "color": [
+                        0.699999988079071,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "enabled": true,
+                    "meshType": "Cube",
+                    "type": "MeshRenderer",
+                    "wireframe": false
                 }
             ],
-            "id": 1,
+            "id": 2,
             "isActive": true,
             "isStatic": false,
-            "name": "Cube (1)"
+            "name": "Cube (2)"
         },
         {
             "components": [
                 {
+                    "enabled": true,
                     "position": {
                         "x": -1.0,
                         "y": 0.0,
@@ -82,21 +102,30 @@
                     "type": "TransformComponent"
                 },
                 {
-                    "type": "MeshRenderer"
+                    "color": [
+                        0.20000000298023224,
+                        0.699999988079071,
+                        0.20000000298023224
+                    ],
+                    "enabled": true,
+                    "meshType": "Sphere",
+                    "type": "MeshRenderer",
+                    "wireframe": false
                 }
             ],
-            "id": 2,
+            "id": 3,
             "isActive": true,
             "isStatic": false,
-            "name": "Sphere (2)"
+            "name": "Sphere (3)"
         },
         {
             "components": [
                 {
+                    "enabled": true,
                     "position": {
-                        "x": -4.2579345703125,
-                        "y": 0.0,
-                        "z": 0.0
+                        "x": 0.9892829656600952,
+                        "y": 1.2699787616729736,
+                        "z": 6.42538070678711e-05
                     },
                     "rotation": {
                         "w": 1.0,
@@ -105,20 +134,28 @@
                         "z": 0.0
                     },
                     "scale": {
-                        "x": 1.0,
+                        "x": 1.5960524082183838,
                         "y": 1.0,
                         "z": 1.0
                     },
                     "type": "TransformComponent"
                 },
                 {
-                    "type": "MeshRenderer"
+                    "color": [
+                        0.45987680554389954,
+                        0.14657823741436005,
+                        0.4901960492134094
+                    ],
+                    "enabled": true,
+                    "meshType": "Sphere",
+                    "type": "MeshRenderer",
+                    "wireframe": false
                 }
             ],
-            "id": 3,
+            "id": 4,
             "isActive": true,
             "isStatic": false,
-            "name": "Cube (3)"
+            "name": "Sphere (4)"
         }
     ],
     "name": "Main Scene"

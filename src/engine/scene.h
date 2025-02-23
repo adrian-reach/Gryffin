@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "../helpers/logging.h"
 #include "gameobject.h"
 #include "components/light.h"
 #include "components/meshrenderer.h"
@@ -18,6 +19,9 @@
 class Scene : public ISerializable {
 public:
     Scene(const std::string& name = "New Scene") : name(name) {}
+    ~Scene() {
+        clearScene();
+    }
 
     GameObject* createGameObject(const std::string& name = "GameObject") {
         auto gameObject = std::make_unique<GameObject>(name);
@@ -33,9 +37,12 @@ public:
             });
 
         if (it != gameObjects.end()) {
+            (*it)->clearComponents();  // Clear components first
             gameObjects.erase(it);
         }
     }
+
+    void clearScene();  // Definition moved to cpp file
 
     const std::vector<std::unique_ptr<GameObject>>& getAllGameObjects() const {
         return gameObjects;
@@ -49,24 +56,25 @@ public:
         j["name"] = name;
         
         // Serialize all game objects
-        json objectsArray = json::array();
+        j["gameObjects"] = json::array();
         for (const auto& gameObject : gameObjects) {
-            json objectJson;
-            gameObject->serialize(objectJson);
-            objectsArray.push_back(objectJson);
+            if (gameObject) {  // Check for null pointers
+                json objectJson;
+                gameObject->serialize(objectJson);
+                j["gameObjects"].push_back(objectJson);
+            }
         }
-        j["gameObjects"] = objectsArray;
     }
 
     void deserialize(const json& j) override {
-        // Clear existing objects
-        gameObjects.clear();
+        clearScene();  // Clear existing objects properly
         
         // Restore scene name
-        j.at("name").get_to(name);
+        name = j.at("name").get<std::string>();
         
         // Deserialize game objects
-        for (const auto& objectJson : j.at("gameObjects")) {
+        const auto& objectsArray = j.at("gameObjects");
+        for (const auto& objectJson : objectsArray) {
             auto gameObject = std::make_unique<GameObject>();
             gameObject->deserialize(objectJson);
             gameObjects.push_back(std::move(gameObject));
@@ -75,12 +83,12 @@ public:
 
     // File operations
     void saveToFile(const std::string& path);
-    void loadFromFile(const std::string& path);
+    bool loadFromFile(const std::string& path);
 
     GameObject* findGameObjectById(uint64_t id) {
         auto it = std::find_if(gameObjects.begin(), gameObjects.end(),
             [id](const std::unique_ptr<GameObject>& obj) {
-                return obj->id == id;
+                return obj && obj->id == id;  // Check for null
             });
 
         return it != gameObjects.end() ? it->get() : nullptr;
@@ -89,7 +97,7 @@ public:
     GameObject* findGameObjectByName(const std::string& name) {
         auto it = std::find_if(gameObjects.begin(), gameObjects.end(),
             [&name](const std::unique_ptr<GameObject>& obj) {
-                return obj->name == name;
+                return obj && obj->name == name;  // Check for null
             });
 
         return it != gameObjects.end() ? it->get() : nullptr;

@@ -10,16 +10,12 @@ set SUB_DIRECTORY_SOURCE_FILES =
 for %%f in (src/engine/game_objects/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
 for %%f in (src/engine/components/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
 
-@REM src/engine/components/light.cpp ^
-@REM src/engine/components/meshrenderer.cpp ^
-
-
 REM Build the executable
 g++ -g -O0 -o editor ^
 src/helpers/*.cpp ^
 src/renderer/*.cpp ^
 src/engine/*.cpp ^
-%SUB_DIRECTORY_SOURCE_FILES % ^
+%SUB_DIRECTORY_SOURCE_FILES% ^
 src/*.cpp ^
 include/glad/glad.c ^
 include/imgui/imgui.cpp ^
@@ -29,6 +25,8 @@ include/imgui/imgui_tables.cpp ^
 include/imgui/backends/imgui_impl_sdl2.cpp ^
 include/imgui/backends/imgui_impl_opengl3.cpp ^
 include/ImGuizmo/ImGuizmo.cpp ^
+src/engine/components/light.cpp ^
+src/engine/components/meshrenderer.cpp ^
 %INCLUDE_FLAGS% %LIB_FLAGS%
 
 @echo off
