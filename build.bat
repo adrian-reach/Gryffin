@@ -15,7 +15,7 @@ for %%f in (src/engine/game_objects/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%
 for %%f in (src/engine/components/*.cpp) do set SOURCE_FILES=!SOURCE_FILES! %%f
 
 REM Build the executable
-g++ -g -O0 -std=c++17 -fpermissive -w -Wfatal-errors -fmax-errors=1 -D_GLIBCXX_USE_CXX11_ABI=1 -o editor ^
+g++ -g -O0 -std=c++2a -fpermissive -w -Wfatal-errors -fmax-errors=1 -D_GLIBCXX_USE_CXX11_ABI=1 -o editor ^
 src/helpers/*.cpp ^
 src/renderer/*.cpp ^
 src/engine/*.cpp ^

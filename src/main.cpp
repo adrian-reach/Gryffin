@@ -122,10 +122,10 @@ int main(int argc, char **argv)
     }
 
     // Print OpenGL info
-    LOG_INFO("OpenGL Version: {0}", glGetString(GL_VERSION));
-    LOG_INFO("OpenGL Vendor: {0}", glGetString(GL_VENDOR));
-    LOG_INFO("OpenGL Renderer: {0}", glGetString(GL_RENDERER));
-    LOG_INFO("GLSL Version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOG_INFO("OpenGL Version: {}", glGetString(GL_VERSION));
+    LOG_INFO("OpenGL Vendor: {}", glGetString(GL_VENDOR));
+    LOG_INFO("OpenGL Renderer: {}", glGetString(GL_RENDERER));
+    LOG_INFO("GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
     // printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
     // printf("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));
     // printf("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));

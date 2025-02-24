@@ -25,8 +25,46 @@ inline std::string getTimestamp() {
     return ss.str();
 }
 
+// Helper function to convert any type to string using stringstream
+template<typename T>
+inline std::string toString(const T& value) {
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
+// Specialization for strings to avoid unnecessary conversion
+template<>
+inline std::string toString<std::string>(const std::string& value) {
+    return value;
+}
+
+template<>
+inline std::string toString<const char*>(const char* const& value) {
+    return value;
+}
+
+// Base case for template recursion
+inline void formatString(std::string& result, size_t& argIndex, const std::string& format) {
+    size_t pos = 0;
+    while ((pos = result.find("{}", pos)) != std::string::npos) {
+        result.replace(pos, 2, "{}");  // Keep remaining placeholders
+        pos += 2;
+    }
+}
+
+// Recursive template to handle multiple arguments
+template<typename T, typename... Args>
+inline void formatString(std::string& result, size_t& argIndex, const std::string& format, T&& value, Args&&... args) {
+    size_t pos = result.find("{}");
+    if (pos != std::string::npos) {
+        result.replace(pos, 2, toString(std::forward<T>(value)));
+        formatString(result, ++argIndex, format, std::forward<Args>(args)...);
+    }
+}
+
 template<typename... Args>
-void log(LogLevel level, const char* format, Args&&... args) {
+inline void log(LogLevel level, const std::string& format, Args&&... args) {
     const char* level_str;
     switch (level) {
         case LogLevel::DEBUG:   level_str = "DEBUG"; break;
@@ -35,10 +73,11 @@ void log(LogLevel level, const char* format, Args&&... args) {
         case LogLevel::ERROR:   level_str = "ERROR"; break;
     }
     
-    char buffer[1024];
-    snprintf(buffer, sizeof(buffer), format, std::forward<Args>(args)...);
+    std::string message = format;
+    size_t argIndex = 0;
+    formatString(message, argIndex, format, std::forward<Args>(args)...);
     
-    std::cout << "[" << getTimestamp() << "] " << level_str << " | " << buffer << std::endl;
+    std::cout << "[" << getTimestamp() << "] " << level_str << " | " << message << std::endl;
 }
 
 #define LOG_DEBUG(format, ...) log(LogLevel::DEBUG, format, ##__VA_ARGS__)
