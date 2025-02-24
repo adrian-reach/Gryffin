@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     // Create a window
-    SDL_Window *window = SDL_CreateWindow("DoomLike Editor",
+    SDL_Window *window = SDL_CreateWindow("Gryffin Editor",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-    glEnable(GL_STENCIL_TEST);  // Enable stencil testing globally
+    glEnable(GL_STENCIL_TEST); // Enable stencil testing globally
 
     // Initialize ImGui
     IMGUI_CHECKVERSION();
@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 
         // Clear buffers
         glClearColor(0.1f, 0.1f, 0.1f, 1.00f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);  // Clear stencil buffer too
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // Clear stencil buffer too
 
         // Start ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
