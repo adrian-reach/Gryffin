@@ -33,6 +33,7 @@ src/engine/components/light.cpp ^
 src/engine/components/meshrenderer.cpp ^
 src/engine/components/script_component.cpp ^
 src/engine/scripting/lua_context.cpp ^
+src/engine/scripting/lua_binding.cpp ^
 %INCLUDE_FLAGS% %LIB_FLAGS%
 
 if %errorlevel% neq 0 (

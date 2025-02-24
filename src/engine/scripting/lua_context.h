@@ -8,6 +8,11 @@
 #include <sol/sol.hpp>
 #include <string>
 
+// Forward declarations
+class TransformComponent;
+class ScriptComponent;
+class GameObject;
+
 class LuaContext
 {
 public:
@@ -30,7 +35,10 @@ public:
     lua_State *L() { return m_lua.lua_state(); }
     sol::state &State() { return m_lua; }
 
+    void setScriptComponent(ScriptComponent* component) { m_scriptComponent = component; }
+
 private:
     sol::state m_lua;
+    ScriptComponent* m_scriptComponent;
     std::string m_lastError;
 };

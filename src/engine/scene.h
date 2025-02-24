@@ -18,7 +18,7 @@
 
 class Scene : public ISerializable {
 public:
-    Scene(const std::string& name = "New Scene") : name(name) {}
+    Scene(const std::string& name = "New Scene") : name(name), isPlaying(false) {}
     ~Scene() {
         clearScene();
     }
@@ -103,7 +103,11 @@ public:
         return it != gameObjects.end() ? it->get() : nullptr;
     }
 
+    void setPlayMode(bool playing) { isPlaying = playing; }
+    bool getPlayMode() const { return isPlaying; }
+
 private:
     std::string name;
     std::vector<std::unique_ptr<GameObject>> gameObjects;
+    bool isPlaying;
 };

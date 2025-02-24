@@ -141,11 +141,11 @@ void Scene::saveToFile(const std::string &path)
             throw std::runtime_error("Failed to write to file: " + path);
         }
 
-        logMessage(LogLevel::Info, "Scene saved successfully to {0}", path);
+        LOG_INFO("Scene saved successfully to {0}", path);
     }
     catch (const std::exception &e)
     {
-        logMessage(LogLevel::Error, "Failed to save scene: {0}", e.what());
+        LOG_ERROR("Failed to save scene: {0}", e.what());
     }
 }
 
@@ -157,7 +157,7 @@ bool Scene::loadFromFile(const std::string &path)
         std::ifstream file(path);
         if (!file.is_open())
         {
-            logMessage(LogLevel::Error, "Failed to open file for reading: {0}", path);
+            LOG_ERROR("Failed to open file for reading: {0}", path);
             return false;
         }
 
@@ -167,7 +167,7 @@ bool Scene::loadFromFile(const std::string &path)
 
         if (file.fail())
         {
-            logMessage(LogLevel::Error, "Failed to read from file: {0}", path);
+            LOG_ERROR("Failed to read from file: {0}", path);
             return false;
         }
 
@@ -179,12 +179,12 @@ bool Scene::loadFromFile(const std::string &path)
         {
             clearScene(); // Clear existing scene properly
             deserialize(j);
-            logMessage(LogLevel::Info, "Scene loaded successfully from {0}", path);
+            LOG_INFO("Scene loaded successfully from {0}", path);
             return true;
         }
         catch (const std::exception &e)
         {
-            logMessage(LogLevel::Error, "Failed to deserialize scene, restoring previous state: {0}", e.what());
+            LOG_ERROR("Failed to deserialize scene, restoring previous state: {0}", e.what());
             clearScene(); // Clear any partial state
             deserialize(currentState);
             return false;
@@ -192,12 +192,12 @@ bool Scene::loadFromFile(const std::string &path)
     }
     catch (const json::parse_error &e)
     {
-        logMessage(LogLevel::Error, "Failed to parse scene file {0}: {1}", path, e.what());
+        LOG_ERROR("Failed to parse scene file {0}: {1}", path, e.what());
         return false;
     }
     catch (const std::exception &e)
     {
-        logMessage(LogLevel::Error, "Failed to load scene from {0}: {1}", path, e.what());
+        LOG_ERROR("Failed to load scene from {0}: {1}", path, e.what());
         return false;
     }
 }

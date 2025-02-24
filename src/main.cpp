@@ -38,7 +38,7 @@ EngineState g_state;
 
 void initializeScene()
 {
-    logMessage(LogLevel::Info, "Initializing scene");
+    LOG_INFO("Initializing scene");
 
     // Create main scene
     g_state.activeScene = std::make_unique<Scene>("Main Scene");
@@ -93,7 +93,8 @@ int main(int argc, char **argv)
 
     if (!window)
     {
-        fprintf(stderr, "Failed to create window: %s\n", SDL_GetError());
+        // fprintf(stderr, "Failed to create window: %s\n", SDL_GetError());
+        LOG_ERROR("Failed to create window: {0}", SDL_GetError());
         return ERROR_SDL_WINDOW_CREATE;
     }
 
@@ -101,7 +102,8 @@ int main(int argc, char **argv)
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     if (!gl_context)
     {
-        fprintf(stderr, "Failed to create OpenGL context: %s\n", SDL_GetError());
+        LOG_ERROR("Failed to create OpenGL context: {0}", SDL_GetError());
+        // fprintf(stderr, "Failed to create OpenGL context: %s\n", SDL_GetError());
         return ERROR_SDL_GL_CONTEXT_CREATE;
     }
 
@@ -114,15 +116,20 @@ int main(int argc, char **argv)
     // Initialize GLAD
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
     {
-        fprintf(stderr, "Failed to initialize OpenGL loader!\n");
+        LOG_ERROR("Failed to initialize OpenGL loader!");
+        // fprintf(stderr, "Failed to initialize OpenGL loader!\n");
         return ERROR_OGL_LOAD_FAILED;
     }
 
     // Print OpenGL info
-    printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-    printf("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));
-    printf("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));
-    printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOG_INFO("OpenGL Version: {0}", glGetString(GL_VERSION));
+    LOG_INFO("OpenGL Vendor: {0}", glGetString(GL_VENDOR));
+    LOG_INFO("OpenGL Renderer: {0}", glGetString(GL_RENDERER));
+    LOG_INFO("GLSL Version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    // printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+    // printf("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));
+    // printf("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));
+    // printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     // Setup initial OpenGL state
     glEnable(GL_DEPTH_TEST);

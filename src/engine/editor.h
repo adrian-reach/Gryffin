@@ -11,8 +11,9 @@
 #include "scene.h"
 #include "gameobject.h"
 #include "../version.h"
-#include "components/meshrenderer.h"
 #include "components/light.h"
+#include "components/meshrenderer.h"
+#include "components/script_component.h"
 #include "components/transform_component.h"
 
 #include <imgui.h>
@@ -296,6 +297,10 @@ private:
                     {
                         selectedObject->addComponent<Light>();
                     }
+                    if (ImGui::MenuItem("Script"))
+                    {
+                        selectedObject->addComponent<ScriptComponent>();
+                    }
                     ImGui::EndPopup();
                 }
 
@@ -307,7 +312,44 @@ private:
                         ImGui::PushID(component.get());
                         if (ImGui::CollapsingHeader(component->getTypeName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
                         {
-                            component->OnGUI();
+                            if (auto *scriptComp = dynamic_cast<ScriptComponent *>(component.get()))
+                            {
+                                // Script component specific GUI
+                                std::string path = scriptComp->scriptPath;
+                                if (ImGui::InputText("Script Path", &path))
+                                {
+                                    scriptComp->scriptPath = path;
+                                }
+
+                                ImGui::SameLine();
+                                if (ImGui::Button("Browse##Script"))
+                                {
+                                    ImGui::OpenPopup("ScriptBrowser");
+                                }
+
+                                // Script browser popup
+                                if (ImGui::BeginPopupModal("ScriptBrowser", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+                                {
+                                    static char scriptPath[256] = "scripts/";
+                                    ImGui::InputText("Path", scriptPath, sizeof(scriptPath));
+
+                                    if (ImGui::Button("Select"))
+                                    {
+                                        scriptComp->scriptPath = scriptPath;
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::SameLine();
+                                    if (ImGui::Button("Cancel"))
+                                    {
+                                        ImGui::CloseCurrentPopup();
+                                    }
+                                    ImGui::EndPopup();
+                                }
+                            }
+                            else
+                            {
+                                component->OnGUI();
+                            }
                         }
                         ImGui::PopID();
                     }
@@ -319,67 +361,66 @@ private:
 
     void renderToolbar()
     {
-        ImGui::Begin("Toolbar");
+        ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+        
+        ImGui::SetWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - ImGui::GetWindowSize().x * 0.5f, 20));
 
-        if (ImGui::Button(isPlaying ? "Stop" : "Play"))
+        if (!isPlaying)
         {
-            isPlaying = !isPlaying;
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Pause"))
-        {
-            // TODO: Implement pause functionality
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Save Scene"))
-        {
-            if (activeScene)
+            if (ImGui::Button("Play"))
             {
-                activeScene->saveToFile("scene.json");
-                ImGui::OpenPopup("SaveSuccess");
+                startPlay();
             }
         }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Load Scene"))
+        else
         {
-            if (activeScene)
+            if (ImGui::Button("Stop"))
             {
-                if (!activeScene->loadFromFile("scene.json"))
-                {
-                    ImGui::OpenPopup("LoadError");
-                }
+                stopPlay();
             }
-        }
-
-        // Save success popup
-        if (ImGui::BeginPopupModal("SaveSuccess", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Scene saved successfully to scene.json!");
-            if (ImGui::Button("OK"))
-            {
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
-
-        // Load error popup
-        if (ImGui::BeginPopupModal("LoadError", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text("Failed to load scene from scene.json.\nCheck the console for details.");
-            if (ImGui::Button("OK"))
-            {
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
         }
 
         ImGui::End();
+    }
+
+    void startPlay()
+    {
+        if (!activeScene) return;
+        
+        isPlaying = true;
+        LOG_INFO("Starting play mode");
+        
+        // Initialize all script components
+        for (const auto& gameObject : activeScene->getAllGameObjects())
+        {
+            if (gameObject && gameObject->isActive)
+            {
+                if (auto script = gameObject->getComponent<ScriptComponent>())
+                {
+                    script->Start();
+                }
+            }
+        }
+    }
+
+    void stopPlay()
+    {
+        if (!activeScene) return;
+        
+        isPlaying = false;
+        LOG_INFO("Stopping play mode");
+        
+        // Clean up scripts if needed
+        for (const auto& gameObject : activeScene->getAllGameObjects())
+        {
+            if (gameObject)
+            {
+                if (auto script = gameObject->getComponent<ScriptComponent>())
+                {
+                    // Reset any script state here if needed
+                }
+            }
+        }
     }
 
     void createGameObject(const std::string &name)

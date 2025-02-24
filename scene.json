@@ -5,7 +5,7 @@
                 {
                     "enabled": true,
                     "position": {
-                        "x": 1.2000000476837158,
+                        "x": 2.0,
                         "y": 2.0,
                         "z": 2.0
                     },
@@ -72,6 +72,10 @@
                     "meshType": "Cube",
                     "type": "MeshRenderer",
                     "wireframe": false
+                },
+                {
+                    "enabled": true,
+                    "type": "ScriptComponent"
                 }
             ],
             "id": 2,
@@ -117,45 +121,6 @@
             "isActive": true,
             "isStatic": false,
             "name": "Sphere (3)"
-        },
-        {
-            "components": [
-                {
-                    "enabled": true,
-                    "position": {
-                        "x": 0.9892829656600952,
-                        "y": 1.2699787616729736,
-                        "z": 6.42538070678711e-05
-                    },
-                    "rotation": {
-                        "w": 1.0,
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "scale": {
-                        "x": 1.5960524082183838,
-                        "y": 1.0,
-                        "z": 1.0
-                    },
-                    "type": "TransformComponent"
-                },
-                {
-                    "color": [
-                        0.45987680554389954,
-                        0.14657823741436005,
-                        0.4901960492134094
-                    ],
-                    "enabled": true,
-                    "meshType": "Sphere",
-                    "type": "MeshRenderer",
-                    "wireframe": false
-                }
-            ],
-            "id": 4,
-            "isActive": true,
-            "isStatic": false,
-            "name": "Sphere (4)"
         }
     ],
     "name": "Main Scene"

@@ -1,80 +1,47 @@
-/**
- * @file logging.h
- * @brief Logging functions for the engine
- */
-
 #pragma once
 
 #include <iostream>
-#include <string>
-#include <chrono>
-#include <iomanip>
 #include <sstream>
+#include <iomanip>
+#include <chrono>
 #include <ctime>
+#include <string>
 
-enum class LogLevel
-{
-    Debug,
-    Info,
-    Warning,
-    Error
+enum class LogLevel {
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR
 };
 
-inline void logMessage(LogLevel level, const std::string &message);
-
-#if __cplusplus >= 202002L
-#include <format>
-template <typename... Args>
-inline void logMessage(LogLevel level, const std::string &formatStr, Args &&...args)
-{
-    logMessage(level, std::format(formatStr, std::forward<Args>(args)...));
-}
-#else
-#include <cstdio>
-template <typename... Args>
-inline void logMessage(LogLevel level, const std::string &formatStr, Args... args)
-{
-    char buffer[1024];
-    std::snprintf(buffer, sizeof(buffer), formatStr.c_str(), args...);
-    logMessage(level, std::string(buffer));
-}
-#endif
-
-inline std::string currentDateTime()
-{
+inline std::string getTimestamp() {
     auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm;
-#ifdef _WIN32
-    localtime_s(&tm, &now_time);
-#else
-    localtime_r(&now_time, &tm);
-#endif
-    std::ostringstream ss;
-    ss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    auto time = std::chrono::system_clock::to_time_t(now);
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&time), "%H:%M:%S");
+    ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
     return ss.str();
 }
 
-inline void logMessage(LogLevel level, const std::string &message)
-{
-    std::string levelStr;
-    switch (level)
-    {
-    case LogLevel::Debug:
-        levelStr = "DEBUG";
-        break;
-    case LogLevel::Info:
-        levelStr = "INFO";
-        break;
-    case LogLevel::Warning:
-        levelStr = "WARNING";
-        break;
-    case LogLevel::Error:
-        levelStr = "ERROR";
-        break;
-    default:
-        levelStr = "UNKNOWN";
-        break;
+template<typename... Args>
+void log(LogLevel level, const char* format, Args&&... args) {
+    const char* level_str;
+    switch (level) {
+        case LogLevel::DEBUG:   level_str = "DEBUG"; break;
+        case LogLevel::INFO:    level_str = "INFO"; break;
+        case LogLevel::WARNING: level_str = "WARN"; break;
+        case LogLevel::ERROR:   level_str = "ERROR"; break;
     }
-    std::cout << "[" << currentDateTime() << "][" << levelStr << "] " << message << std::endl;
+    
+    char buffer[1024];
+    snprintf(buffer, sizeof(buffer), format, std::forward<Args>(args)...);
+    
+    std::cout << "[" << getTimestamp() << "] " << level_str << " | " << buffer << std::endl;
 }
+
+#define LOG_DEBUG(format, ...) log(LogLevel::DEBUG, format, ##__VA_ARGS__)
+#define LOG_INFO(format, ...) log(LogLevel::INFO, format, ##__VA_ARGS__)
+#define LOG_WARNING(format, ...) log(LogLevel::WARNING, format, ##__VA_ARGS__)
+#define LOG_ERROR(format, ...) log(LogLevel::ERROR, format, ##__VA_ARGS__)
