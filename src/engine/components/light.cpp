@@ -119,7 +119,7 @@ glm::vec3 Light::getPosition() const
 void Light::serialize(json &j) const
 {
     Component::serialize(j);
-    j["type"] = static_cast<int>(type);
+    j["lightType"] = static_cast<int>(type);
     j["color"] = {color.r, color.g, color.b};
     j["intensity"] = intensity;
     j["range"] = range;
@@ -129,7 +129,7 @@ void Light::serialize(json &j) const
 void Light::deserialize(const json &j)
 {
     Component::deserialize(j);
-    type = static_cast<Type>(j["type"].get<int>());
+    type = static_cast<Type>(j["lightType"].get<int>());
     auto colorArray = j["color"].get<std::vector<float>>();
     color = glm::vec3(colorArray[0], colorArray[1], colorArray[2]);
     intensity = j["intensity"].get<float>();

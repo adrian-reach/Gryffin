@@ -3,6 +3,7 @@
 #include "components/transform_component.h"
 #include "components/meshrenderer.h"
 #include "components/light.h"
+#include "components/script_component.h"
 #include "serialization.h"
 #include <memory>
 #include <vector>
@@ -188,6 +189,10 @@ public:
             else if (typeName == "Light")
             {
                 component = std::make_unique<Light>();
+            }
+            else if (typeName == "ScriptComponent")
+            {
+                component = std::make_unique<ScriptComponent>();
             }
 
             if (component)

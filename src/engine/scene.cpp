@@ -141,11 +141,11 @@ void Scene::saveToFile(const std::string &path)
             throw std::runtime_error("Failed to write to file: " + path);
         }
 
-        LOG_INFO("Scene saved successfully to {0}", path);
+        LOG_INFO("Scene saved successfully to {}", path);
     }
     catch (const std::exception &e)
     {
-        LOG_ERROR("Failed to save scene: {0}", e.what());
+        LOG_ERROR("Failed to save scene: {}", e.what());
     }
 }
 
@@ -157,7 +157,7 @@ bool Scene::loadFromFile(const std::string &path)
         std::ifstream file(path);
         if (!file.is_open())
         {
-            LOG_ERROR("Failed to open file for reading: {0}", path);
+            LOG_ERROR("Failed to open file for reading: {}", path);
             return false;
         }
 
@@ -167,7 +167,7 @@ bool Scene::loadFromFile(const std::string &path)
 
         if (file.fail())
         {
-            LOG_ERROR("Failed to read from file: {0}", path);
+            LOG_ERROR("Failed to read from file: {}", path);
             return false;
         }
 
@@ -179,12 +179,35 @@ bool Scene::loadFromFile(const std::string &path)
         {
             clearScene(); // Clear existing scene properly
             deserialize(j);
-            LOG_INFO("Scene loaded successfully from {0}", path);
+            LOG_INFO("Scene loaded successfully from {}", path);
             return true;
         }
         catch (const std::exception &e)
         {
-            LOG_ERROR("Failed to deserialize scene, restoring previous state: {0}", e.what());
+            // Get the location of the error in the file, and print it to the log
+            size_t byteLocation = file.tellg();
+            size_t line = 1;
+            size_t column = 1;
+            file.seekg(0);
+
+            for (size_t i = 0; i < byteLocation; ++i)
+            {
+                char c;
+                file.get(c);
+                if (c == '\n')
+                {
+                    ++line;
+                    column = 1;
+                }
+                else
+                {
+                    ++column;
+                }
+            }
+
+            LOG_ERROR("Failed to deserialize scene at line {} column {}: {}", line, column, e.what());
+
+            // LOG_ERROR("Failed to deserialize scene, restoring previous state: {}", e.what());
             clearScene(); // Clear any partial state
             deserialize(currentState);
             return false;
@@ -192,12 +215,12 @@ bool Scene::loadFromFile(const std::string &path)
     }
     catch (const json::parse_error &e)
     {
-        LOG_ERROR("Failed to parse scene file {0}: {1}", path, e.what());
+        LOG_ERROR("Failed to parse scene file {}: {}", path, e.what());
         return false;
     }
     catch (const std::exception &e)
     {
-        LOG_ERROR("Failed to load scene from {0}: {1}", path, e.what());
+        LOG_ERROR("Failed to load scene from {}: {}", path, e.what());
         return false;
     }
 }

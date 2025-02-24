@@ -30,9 +30,10 @@
                     ],
                     "enabled": true,
                     "intensity": 1.0,
+                    "lightType": 0,
                     "range": 10.0,
                     "spotAngle": 45.0,
-                    "type": 0
+                    "type": "Light"
                 }
             ],
             "id": 1,
@@ -75,6 +76,7 @@
                 },
                 {
                     "enabled": true,
+                    "scriptPath": "scripts/rotate_cube.lua",
                     "type": "ScriptComponent"
                 }
             ],

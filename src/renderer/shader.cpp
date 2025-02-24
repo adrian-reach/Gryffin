@@ -102,7 +102,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         GLint location = glGetUniformLocation(ID, uniformName);
         if (location == -1)
         {
-            LOG_WARNING("Expected uniform '%s' not found in shader program", uniformName);
+            LOG_WARNING("Expected uniform {} not found in shader program", uniformName);
             // logMessage(LogLevel::Warning, "Expected uniform '%s' not found in shader program", uniformName);
             // printf("Warning: Expected uniform '%s' not found in shader program\n", uniformName);
         }

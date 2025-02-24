@@ -359,10 +359,13 @@ private:
         ImGui::End();
     }
 
+    /**
+     * @brief Render the toolbar at the top of the window, allowing for scene control.
+     */
     void renderToolbar()
     {
         ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-        
+
         ImGui::SetWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f - ImGui::GetWindowSize().x * 0.5f, 20));
 
         if (!isPlaying)
@@ -380,18 +383,37 @@ private:
             }
         }
 
+        if (ImGui::Button("Save"))
+        {
+            if (activeScene)
+            {
+                activeScene->saveToFile("scene.json");
+            }
+        }
+
+        if (ImGui::Button("Load"))
+        {
+            auto newScene = std::make_unique<Scene>();
+            newScene->loadFromFile("scene.json");
+            setActiveScene(newScene.release());
+        }
+
         ImGui::End();
     }
 
+    /**
+     * @brief Start play mode in the editor.
+     */
     void startPlay()
     {
-        if (!activeScene) return;
-        
+        if (!activeScene)
+            return;
+
         isPlaying = true;
         LOG_INFO("Starting play mode");
-        
+
         // Initialize all script components
-        for (const auto& gameObject : activeScene->getAllGameObjects())
+        for (const auto &gameObject : activeScene->getAllGameObjects())
         {
             if (gameObject && gameObject->isActive)
             {
@@ -403,15 +425,19 @@ private:
         }
     }
 
+    /**
+     * @brief Stop play mode in the editor.
+     */
     void stopPlay()
     {
-        if (!activeScene) return;
-        
+        if (!activeScene)
+            return;
+
         isPlaying = false;
         LOG_INFO("Stopping play mode");
-        
+
         // Clean up scripts if needed
-        for (const auto& gameObject : activeScene->getAllGameObjects())
+        for (const auto &gameObject : activeScene->getAllGameObjects())
         {
             if (gameObject)
             {
