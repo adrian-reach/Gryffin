@@ -12,71 +12,81 @@
 // in the Scene's render method. This cpp file exists mainly for proper linking.
 
 Light::Light()
-    : type(Type::Directional)
-    , color(1.0f)
-    , intensity(1.0f)
-    , range(10.0f)
-    , spotAngle(45.0f)
+    : type(Type::Directional), color(1.0f), intensity(1.0f), range(10.0f), spotAngle(45.0f)
 {
 }
 
-void Light::render(Shader& shader) {
+void Light::Render(Shader &shader)
+{
     // TODO: Set light uniforms in shader
-    if (!enabled) return;
+    if (!enabled)
+        return;
 
     auto transform = owner->getTransform();
-    if (!transform) return;
+    if (!transform)
+        return;
 
     // Set light properties in shader
     shader.setVec3("lightColor", color);
     shader.setFloat("lightIntensity", intensity);
 
-    if (type == Type::Directional) {
+    if (type == Type::Directional)
+    {
         shader.setVec3("lightDir", getDirection());
     }
-    else {
+    else
+    {
         shader.setVec3("lightPos", getPosition());
         shader.setFloat("lightRange", range);
 
-        if (type == Type::Spot) {
+        if (type == Type::Spot)
+        {
             shader.setFloat("spotAngle", glm::radians(spotAngle));
             shader.setVec3("spotDir", getDirection());
         }
     }
 }
 
-void Light::onGUI() {
-    if (ImGui::TreeNode("Light")) {
+void Light::OnGUI()
+{
+    if (ImGui::TreeNode("Light"))
+    {
         // Type selector
-        const char* types[] = { "Directional", "Point", "Spot" };
+        const char *types[] = {"Directional", "Point", "Spot"};
         int currentType = static_cast<int>(type);
-        if (ImGui::Combo("Type", &currentType, types, IM_ARRAYSIZE(types))) {
+        if (ImGui::Combo("Type", &currentType, types, IM_ARRAYSIZE(types)))
+        {
             type = static_cast<Type>(currentType);
         }
 
         // Color
         ImGui::ColorEdit3("Color", &color.x);
-        
+
         // Intensity
         ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f, 10.0f);
-        
+
         // Range (only for point and spot lights)
-        if (type != Type::Directional) {
+        if (type != Type::Directional)
+        {
             ImGui::DragFloat("Range", &range, 0.5f, 0.1f, 100.0f);
         }
-        
+
         // Spot angle (only for spot lights)
-        if (type == Type::Spot) {
+        if (type == Type::Spot)
+        {
             ImGui::DragFloat("Spot Angle", &spotAngle, 1.0f, 1.0f, 179.0f);
         }
 
         // Show transform info
-        if (auto transform = owner->getTransform()) {
-            if (type == Type::Directional) {
+        if (auto transform = owner->getTransform())
+        {
+            if (type == Type::Directional)
+            {
                 glm::vec3 direction = getDirection();
                 ImGui::Text("Direction: %.2f, %.2f, %.2f", direction.x, direction.y, direction.z);
             }
-            else {
+            else
+            {
                 glm::vec3 position = getPosition();
                 ImGui::Text("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z);
             }
@@ -86,8 +96,10 @@ void Light::onGUI() {
     }
 }
 
-glm::vec3 Light::getDirection() const {
-    if (auto transform = owner->getTransform()) {
+glm::vec3 Light::getDirection() const
+{
+    if (auto transform = owner->getTransform())
+    {
         // Use the forward vector of the transform
         glm::mat4 rotation = transform->getLocalMatrix();
         return -glm::normalize(glm::vec3(rotation[2])); // -Z is forward
@@ -95,14 +107,17 @@ glm::vec3 Light::getDirection() const {
     return glm::vec3(0.0f, -1.0f, 0.0f); // Default to pointing down
 }
 
-glm::vec3 Light::getPosition() const {
-    if (auto transform = owner->getTransform()) {
+glm::vec3 Light::getPosition() const
+{
+    if (auto transform = owner->getTransform())
+    {
         return transform->position;
     }
     return glm::vec3(0.0f);
 }
 
-void Light::serialize(json& j) const {
+void Light::serialize(json &j) const
+{
     Component::serialize(j);
     j["type"] = static_cast<int>(type);
     j["color"] = {color.r, color.g, color.b};
@@ -111,7 +126,8 @@ void Light::serialize(json& j) const {
     j["spotAngle"] = spotAngle;
 }
 
-void Light::deserialize(const json& j) {
+void Light::deserialize(const json &j)
+{
     Component::deserialize(j);
     type = static_cast<Type>(j["type"].get<int>());
     auto colorArray = j["color"].get<std::vector<float>>();

@@ -29,7 +29,7 @@ public:
         selectedObject = nullptr;
     }
 
-    GameObject* getSelectedObject() const { return selectedObject; }
+    GameObject *getSelectedObject() const { return selectedObject; }
 
     void update()
     {
@@ -45,40 +45,52 @@ public:
 private:
     void renderMainMenuBar()
     {
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("New Scene")) {
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("New Scene"))
+                {
                     setActiveScene(new Scene("New Scene"));
                 }
-                if (ImGui::MenuItem("Save Scene")) {
+                if (ImGui::MenuItem("Save Scene"))
+                {
                     ImGui::OpenPopup("SaveScene");
                 }
-                if (ImGui::MenuItem("Load Scene")) {
+                if (ImGui::MenuItem("Load Scene"))
+                {
                     ImGui::OpenPopup("LoadScene");
                 }
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("GameObject")) {
-                if (ImGui::MenuItem("Create Empty")) {
+            if (ImGui::BeginMenu("GameObject"))
+            {
+                if (ImGui::MenuItem("Create Empty"))
+                {
                     createGameObject("GameObject");
                 }
-                if (ImGui::BeginMenu("3D Object")) {
-                    if (ImGui::MenuItem("Cube")) {
+                if (ImGui::BeginMenu("3D Object"))
+                {
+                    if (ImGui::MenuItem("Cube"))
+                    {
                         createCube();
                     }
-                    if (ImGui::MenuItem("Sphere")) {
+                    if (ImGui::MenuItem("Sphere"))
+                    {
                         createSphere();
                     }
                     ImGui::EndMenu();
                 }
-                if (ImGui::MenuItem("Light")) {
+                if (ImGui::MenuItem("Light"))
+                {
                     createLight();
                 }
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("About")) {
+            if (ImGui::BeginMenu("About"))
+            {
                 ImGui::MenuItem(("Version: " + Engine::VERSION).c_str());
                 ImGui::EndMenu();
             }
@@ -87,36 +99,43 @@ private:
         }
 
         // Save Scene Dialog
-        if (ImGui::BeginPopupModal("SaveScene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (ImGui::BeginPopupModal("SaveScene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
             static char pathBuffer[256] = "scene.json";
             ImGui::InputText("File Path", pathBuffer, sizeof(pathBuffer));
 
-            if (ImGui::Button("Save")) {
-                if (activeScene) {
+            if (ImGui::Button("Save"))
+            {
+                if (activeScene)
+                {
                     activeScene->saveToFile(pathBuffer);
                 }
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Cancel")) {
+            if (ImGui::Button("Cancel"))
+            {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
         }
 
         // Load Scene Dialog
-        if (ImGui::BeginPopupModal("LoadScene", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (ImGui::BeginPopupModal("LoadScene", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
             static char pathBuffer[256] = "scene.json";
             ImGui::InputText("File Path", pathBuffer, sizeof(pathBuffer));
 
-            if (ImGui::Button("Load")) {
+            if (ImGui::Button("Load"))
+            {
                 auto newScene = std::make_unique<Scene>();
                 newScene->loadFromFile(pathBuffer);
                 setActiveScene(newScene.release());
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Cancel")) {
+            if (ImGui::Button("Cancel"))
+            {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
@@ -222,17 +241,20 @@ private:
 
                         ImGui::Separator();
                         ImGui::Text("Gizmo Mode:");
-                        
+
                         // Gizmo operation radio buttons
                         bool isTranslate = transform->getGizmoOperation() == ImGuizmo::TRANSLATE;
                         bool isRotate = transform->getGizmoOperation() == ImGuizmo::ROTATE;
                         bool isScale = transform->getGizmoOperation() == ImGuizmo::SCALE;
 
-                        if (ImGui::RadioButton("Translate", isTranslate)) transform->setGizmoOperation(ImGuizmo::TRANSLATE);
+                        if (ImGui::RadioButton("Translate", isTranslate))
+                            transform->setGizmoOperation(ImGuizmo::TRANSLATE);
                         ImGui::SameLine();
-                        if (ImGui::RadioButton("Rotate", isRotate)) transform->setGizmoOperation(ImGuizmo::ROTATE);
+                        if (ImGui::RadioButton("Rotate", isRotate))
+                            transform->setGizmoOperation(ImGuizmo::ROTATE);
                         ImGui::SameLine();
-                        if (ImGui::RadioButton("Scale", isScale)) transform->setGizmoOperation(ImGuizmo::SCALE);
+                        if (ImGui::RadioButton("Scale", isScale))
+                            transform->setGizmoOperation(ImGuizmo::SCALE);
                     }
                 }
 
@@ -278,13 +300,14 @@ private:
                 }
 
                 // Render GUI for all components except Transform
-                for (const auto& component : selectedObject->getAllComponents())
+                for (const auto &component : selectedObject->getAllComponents())
                 {
-                    if (component->getTypeName() != "TransformComponent") {  // Skip TransformComponent
+                    if (component->getTypeName() != "TransformComponent")
+                    { // Skip TransformComponent
                         ImGui::PushID(component.get());
                         if (ImGui::CollapsingHeader(component->getTypeName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
                         {
-                            component->onGUI();
+                            component->OnGUI();
                         }
                         ImGui::PopID();
                     }
@@ -314,7 +337,8 @@ private:
 
         if (ImGui::Button("Save Scene"))
         {
-            if (activeScene) {
+            if (activeScene)
+            {
                 activeScene->saveToFile("scene.json");
                 ImGui::OpenPopup("SaveSuccess");
             }
@@ -324,26 +348,32 @@ private:
 
         if (ImGui::Button("Load Scene"))
         {
-            if (activeScene) {
-                if (!activeScene->loadFromFile("scene.json")) {
+            if (activeScene)
+            {
+                if (!activeScene->loadFromFile("scene.json"))
+                {
                     ImGui::OpenPopup("LoadError");
                 }
             }
         }
 
         // Save success popup
-        if (ImGui::BeginPopupModal("SaveSuccess", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (ImGui::BeginPopupModal("SaveSuccess", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
             ImGui::Text("Scene saved successfully to scene.json!");
-            if (ImGui::Button("OK")) {
+            if (ImGui::Button("OK"))
+            {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
         }
 
         // Load error popup
-        if (ImGui::BeginPopupModal("LoadError", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        if (ImGui::BeginPopupModal("LoadError", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
             ImGui::Text("Failed to load scene from scene.json.\nCheck the console for details.");
-            if (ImGui::Button("OK")) {
+            if (ImGui::Button("OK"))
+            {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();

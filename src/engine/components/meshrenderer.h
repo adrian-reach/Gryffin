@@ -9,28 +9,30 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-class MeshRenderer : public Component {
+class MeshRenderer : public Component
+{
 public:
     MeshRenderer();
     virtual ~MeshRenderer() = default;
 
     // Core functionality
-    virtual void render(Shader& shader) override;
-    virtual void onGUI() override;
+    virtual void Render(Shader &shader) override;
+    virtual void OnGUI() override;
 
     // Mesh management
     void setMesh(std::shared_ptr<Mesh> newMesh) { mesh = newMesh; }
     std::shared_ptr<Mesh> getMesh() const { return mesh; }
 
     // Material properties
-    void setColor(const glm::vec3& newColor) { color = newColor; }
-    const glm::vec3& getColor() const { return color; }
+    void setColor(const glm::vec3 &newColor) { color = newColor; }
+    const glm::vec3 &getColor() const { return color; }
 
     // Serialization
-    virtual void serialize(json& j) const override;
-    virtual void deserialize(const json& j) override;
+    virtual void serialize(json &j) const override;
+    virtual void deserialize(const json &j) override;
 
-    virtual std::string getTypeName() const override {
+    virtual std::string getTypeName() const override
+    {
         return "MeshRenderer";
     }
 

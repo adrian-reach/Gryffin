@@ -8,6 +8,7 @@
 #include <iomanip>
 #include "components/light.h"
 #include "components/meshrenderer.h"
+#include "components/script_component.h"
 #include "scene.h"
 #include "../helpers/logging.h"
 #include <json/json.hpp>
@@ -55,7 +56,7 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
         {
             if (component && component->isEnabled())
             {
-                component->render(shader);
+                component->Render(shader);
             }
         }
     }
@@ -73,10 +74,10 @@ void Scene::render(Shader &shader, GameObject *selectedObject)
 
             // Begin ImGuizmo frame
             ImGuizmo::BeginFrame();
-            
+
             // Set the viewport for ImGuizmo (should match your rendering viewport)
             ImGuizmo::SetRect(0, 0, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
-            
+
             // Set orthographic mode based on camera
             ImGuizmo::SetOrthographic(false);
 
@@ -92,14 +93,25 @@ void Scene::update(float deltaTime)
     {
         if (gameObject && gameObject->isActive)
         {
+            // Update all components
             gameObject->update(deltaTime);
+
+            // If the object has a script, call OnUpdate
+            // TODO: What happens if the script is disabled, or if there are multiple scripts?
+            if (auto script = gameObject->getComponent<ScriptComponent>())
+            {
+                script->Update(deltaTime);
+            }
         }
     }
 }
 
-void Scene::clearScene() {
-    for (auto& gameObject : gameObjects) {
-        if (gameObject) {
+void Scene::clearScene()
+{
+    for (auto &gameObject : gameObjects)
+    {
+        if (gameObject)
+        {
             gameObject->clearComponents();
         }
     }
@@ -108,46 +120,53 @@ void Scene::clearScene() {
 
 void Scene::saveToFile(const std::string &path)
 {
-    try {
+    try
+    {
         // Create JSON object
         json j;
         serialize(j);
-        
+
         // Open file for writing
         std::ofstream file(path);
-        if (!file.is_open()) {
+        if (!file.is_open())
+        {
             throw std::runtime_error("Failed to open file for writing: " + path);
         }
-        
+
         // Write JSON with pretty printing (4 spaces indent)
         file << std::setw(4) << j << std::endl;
-        
-        if (file.fail()) {
+
+        if (file.fail())
+        {
             throw std::runtime_error("Failed to write to file: " + path);
         }
 
         logMessage(LogLevel::Info, "Scene saved successfully to {0}", path);
     }
-    catch (const std::exception& e) {
+    catch (const std::exception &e)
+    {
         logMessage(LogLevel::Error, "Failed to save scene: {0}", e.what());
     }
 }
 
 bool Scene::loadFromFile(const std::string &path)
 {
-    try {
+    try
+    {
         // Open file for reading
         std::ifstream file(path);
-        if (!file.is_open()) {
+        if (!file.is_open())
+        {
             logMessage(LogLevel::Error, "Failed to open file for reading: {0}", path);
             return false;
         }
-        
+
         // Parse JSON
         json j;
         file >> j;
-        
-        if (file.fail()) {
+
+        if (file.fail())
+        {
             logMessage(LogLevel::Error, "Failed to read from file: {0}", path);
             return false;
         }
@@ -155,25 +174,29 @@ bool Scene::loadFromFile(const std::string &path)
         // Store current state in case we need to restore it
         json currentState;
         serialize(currentState);
-        
-        try {
-            clearScene();  // Clear existing scene properly
+
+        try
+        {
+            clearScene(); // Clear existing scene properly
             deserialize(j);
             logMessage(LogLevel::Info, "Scene loaded successfully from {0}", path);
             return true;
         }
-        catch (const std::exception& e) {
+        catch (const std::exception &e)
+        {
             logMessage(LogLevel::Error, "Failed to deserialize scene, restoring previous state: {0}", e.what());
-            clearScene();  // Clear any partial state
+            clearScene(); // Clear any partial state
             deserialize(currentState);
             return false;
         }
     }
-    catch (const json::parse_error& e) {
+    catch (const json::parse_error &e)
+    {
         logMessage(LogLevel::Error, "Failed to parse scene file {0}: {1}", path, e.what());
         return false;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception &e)
+    {
         logMessage(LogLevel::Error, "Failed to load scene from {0}: {1}", path, e.what());
         return false;
     }

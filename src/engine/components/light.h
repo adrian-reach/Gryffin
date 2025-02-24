@@ -2,9 +2,11 @@
 #include "../component.h"
 #include <glm/glm.hpp>
 
-class Light : public Component {
+class Light : public Component
+{
 public:
-    enum class Type {
+    enum class Type
+    {
         Directional,
         Point,
         Spot
@@ -14,8 +16,8 @@ public:
     virtual ~Light() = default;
 
     // Core functionality
-    virtual void render(Shader& shader) override;
-    virtual void onGUI() override;
+    virtual void Render(Shader &shader) override;
+    virtual void OnGUI() override;
 
     // Properties
     Type type;
@@ -30,10 +32,11 @@ public:
     glm::vec3 getPosition() const;
 
     // Serialization
-    virtual void serialize(json& j) const override;
-    virtual void deserialize(const json& j) override;
+    virtual void serialize(json &j) const override;
+    virtual void deserialize(const json &j) override;
 
-    virtual std::string getTypeName() const override {
+    virtual std::string getTypeName() const override
+    {
         return "Light";
     }
 
